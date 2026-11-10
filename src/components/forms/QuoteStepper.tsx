@@ -10,11 +10,15 @@ const segments = [
   { value: 'industria', label: 'Industria / edificio', hint: 'Proyecto a medida' },
 ];
 
-type Props = { service?: string; product?: string; productName?: string; projectRef?: string };
+export type EquipmentOption = { slug: string; name: string; capacities: number[] };
+type Props = { service?: string; product?: string; productName?: string; projectRef?: string; equipment: EquipmentOption[] };
 
 /** /cotizar: 3-step form. All steps stay mounted so FormData includes every field. */
-export default function QuoteStepper({ service, product, productName, projectRef }: Props) {
+export default function QuoteStepper({ service, product, projectRef, equipment }: Props) {
   const [step, setStep] = useState(0);
+  const [svc, setSvc] = useState(product ? 'Instalación' : service ?? 'Instalación');
+  const [model, setModel] = useState(product ?? '');
+  const capacities = equipment.find((e) => e.slug === model)?.capacities ?? [];
   const [dir, setDir] = useState<1 | -1>(1);
   const formRef = useRef<HTMLFormElement>(null);
   const { pending, errors, formError, submit } = useLeadSubmit();
@@ -47,7 +51,6 @@ export default function QuoteStepper({ service, product, productName, projectRef
           </li>
         ))}
       </ol>
-      <Hidden name="product" value={product} />
       <Hidden name="projectRef" value={projectRef} />
 
       <div {...panel(0)}>
@@ -61,7 +64,24 @@ export default function QuoteStepper({ service, product, productName, projectRef
             </label>
           ))}
         </div>
-        {productName ? <Hidden name="service" value="Instalación" /> : <Select label="¿Qué necesitas?" name="service" defaultValue={service} options={serviceOptions} />}
+        <Select label="¿Qué necesitas?" name="service" value={svc} onChange={(e) => setSvc(e.target.value)} options={serviceOptions} />
+        {svc === 'Instalación' && (
+          <div className="grid gap-3 sm:grid-cols-[1fr_200px]">
+            <Select
+              label="Equipo"
+              name="product"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              options={[{ value: '', label: 'Que me recomienden' }, ...equipment.map((e) => ({ value: e.slug, label: e.name }))]}
+            />
+            <Select
+              label="Capacidad"
+              name="capacity"
+              disabled={!capacities.length}
+              options={capacities.length ? capacities.map((c) => ({ value: String(c), label: `${c.toLocaleString('en-US')} BTU` })) : [{ value: '', label: 'Según el espacio' }]}
+            />
+          </div>
+        )}
       </div>
 
       <div {...panel(1)}>

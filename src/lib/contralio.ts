@@ -14,6 +14,8 @@ export type Lead = {
   segment?: 'hogar' | 'empresa' | 'industria';
   service?: string;
   product?: string;
+  /** BTU/h chosen for the product, if any. */
+  capacity?: number;
   projectRef?: string;
   city?: string;
   area?: number;

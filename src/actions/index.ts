@@ -16,6 +16,7 @@ export const server = {
       segment: z.enum(['hogar', 'empresa', 'industria']).nullish().transform((v) => v ?? undefined),
       service: opt,
       product: opt,
+      capacity: opt.pipe(z.coerce.number().int().positive().optional()),
       projectRef: opt,
       city: opt,
       area: opt.pipe(z.coerce.number().positive('Ingresa un área válida').optional()),

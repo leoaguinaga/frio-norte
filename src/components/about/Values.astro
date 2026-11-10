@@ -1,17 +1,20 @@
 ---
 import Section from '../ui/Section.astro';
+// Icon paths: 24px, stroke-based (Lucide style).
 const values = [
-  ['Distribuidores LG', 'Acceso directo a equipos, repuestos y soporte de ingeniería.'],
-  ['Técnicos certificados', 'Capacitación continua en las últimas tecnologías.'],
-  ['Showroom en Chiclayo', 'Ve y prueba los equipos antes de decidir.'],
-  ['Respuesta en 24 h', 'Cotizaciones y atención sin demoras.'],
+  { t: 'Distribuidores LG', d: 'Acceso directo a equipos, repuestos y soporte de ingeniería.', icon: '<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/>' },
+  { t: 'Técnicos certificados', d: 'Capacitación continua en las últimas tecnologías.', icon: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4 2.5-2.5Z"/>' },
+  { t: 'Showroom en Chiclayo', d: 'Ve y prueba los equipos antes de decidir.', icon: '<path d="M3 9.5 4.5 4h15L21 9.5"/><path d="M3 9.5a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/>' },
+  { t: 'Respuesta en 24 h', d: 'Cotizaciones y atención sin demoras.', icon: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
 ];
 ---
 <Section class="!pt-0">
   <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    {values.map(([t, d], i) => (
+    {values.map(({ t, d, icon }, i) => (
       <li class="flex flex-col gap-2.5 rounded-3xl bg-surface p-7" data-reveal style={`--i:${i}`}>
-        <span class="mb-1 size-9 rounded-[10px] bg-primary-soft" aria-hidden="true"></span>
+        <span class="mb-1 grid size-10 place-items-center rounded-[12px] bg-primary-soft text-primary" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={icon} />
+        </span>
         <h3 class="text-h4">{t}</h3>
         <p class="text-sm text-muted">{d}</p>
       </li>

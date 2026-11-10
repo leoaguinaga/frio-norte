@@ -5,7 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Eyebrow from '../components/ui/Eyebrow.astro';
 import Photo from '../components/ui/Photo.astro';
 import QuoteStepper from '../components/forms/QuoteStepper';
-import { getProduct } from '../data/products';
+import { getProduct, products } from '../data/products';
 import { productImage } from '../lib/images';
 
 const q = Astro.url.searchParams;
@@ -29,7 +29,7 @@ const perks = ['Respuesta en 24 h', 'Visita técnica sin costo en Chiclayo', 'Pr
       )}
     </div>
     <div class="rounded-[32px] bg-surface p-6 shadow-[var(--shadow-float)] sm:p-10">
-      <QuoteStepper client:load service={service} product={product?.slug} productName={product?.name} projectRef={projectRef} />
+      <QuoteStepper client:load service={service} product={product?.slug} projectRef={projectRef} equipment={products.map(({ slug, name, capacities }) => ({ slug, name, capacities }))} />
     </div>
   </section>
 </BaseLayout>

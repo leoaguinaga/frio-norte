@@ -1,5 +1,6 @@
 ---
-import { Image } from 'astro:assets';
+// Plain <img>: the logo is a small PNG, so it skips the image optimiser
+// and renders the same on static and on-demand pages (/cotizar, /gracias).
 import logo from '../../assets/logo-frionorte.png';
 
 interface Props {
@@ -12,10 +13,11 @@ const { variant = 'color', size = 'md', class: cls } = Astro.props;
 const heights = { md: 'h-8', lg: 'h-12' };
 ---
 <a href="/" class:list={['inline-flex shrink-0', cls]} aria-label="Frío Norte, ir al inicio">
-  <Image
-    src={logo}
+  <img
+    src={logo.src}
+    width={logo.width}
+    height={logo.height}
     alt="Frío Norte"
     class:list={['w-auto', heights[size], variant === 'white' && 'brightness-0 invert']}
-    loading="eager"
   />
 </a>
