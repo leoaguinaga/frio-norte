@@ -1,0 +1,9 @@
+---
+const { inverse = false } = Astro.props as { inverse?: boolean };
+---
+<p class:list={['inline-flex items-center gap-2 text-caption', inverse ? 'text-white' : 'text-ink']}>
+  <span class="grid size-3.5 place-items-center rounded-[4px] bg-primary" aria-hidden="true">
+    <span class="size-1.5 rounded-[1px] bg-white"></span>
+  </span>
+  <slot />
+</p>

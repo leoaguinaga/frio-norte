@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import WhatsAppFab from '../components/layout/WhatsAppFab.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>;
+}
+const { title, description, image = '/og.jpg', noindex = false, jsonLd } = Astro.props;
+const fullTitle = Astro.url.pathname === '/' ? `${site.name} · ${title}` : `${title} · ${site.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const business = {
+  '@context': 'https://schema.org', '@type': 'HVACBusiness', name: site.name, url: site.url,
+  telephone: site.phone, email: site.email, address: { '@type': 'PostalAddress', streetAddress: site.address, addressLocality: 'Chiclayo', addressCountry: 'PE' },
+  openingHours: 'Mo-Sa 08:00-19:00', areaServed: ['Lambayeque', 'Piura', 'La Libertad', 'Cajamarca'],
+};
+---
+<!doctype html>
+<html lang="es-PE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add('js')</script>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(image, Astro.site).href} />
+    <meta property="og:locale" content="es_PE" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script type="application/ld+json" set:html={JSON.stringify(business)} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body class="min-h-dvh">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-white">Saltar al contenido</a>
+    <Header />
+    <main id="main"><slot /></main>
+    <Footer />
+    <WhatsAppFab />
+    <script>import '../scripts/reveal';</script>
+  </body>
+</html>

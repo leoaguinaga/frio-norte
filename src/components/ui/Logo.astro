@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../assets/logo-frionorte.png';
+
+interface Props {
+  /** white = flattened to pure white for dark backgrounds (brightness(0) + invert). */
+  variant?: 'color' | 'white';
+  size?: 'md' | 'lg';
+  class?: string;
+}
+const { variant = 'color', size = 'md', class: cls } = Astro.props;
+const heights = { md: 'h-8', lg: 'h-12' };
+---
+<a href="/" class:list={['inline-flex shrink-0', cls]} aria-label="Frío Norte, ir al inicio">
+  <Image
+    src={logo}
+    alt="Frío Norte"
+    class:list={['w-auto', heights[size], variant === 'white' && 'brightness-0 invert']}
+    loading="eager"
+  />
+</a>

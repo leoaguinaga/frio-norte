@@ -1,0 +1,90 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+/* Tokens mirror Figma "02 — Design System" variables. */
+@theme {
+  --font-sans: "Geist Variable", system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+
+  --color-canvas: #f2f6fa;
+  --color-surface: #ffffff;
+  --color-surface-muted: #e4ecf4;
+  --color-line: #dae3ed;
+  --color-ink: #0b1b33;
+  --color-muted: #5b6b80;
+  --color-primary: #1f74d0;
+  --color-primary-soft: #e3eefb;
+  --color-secondary: #3d9a7a;
+  --color-secondary-soft: #e2f2ec;
+
+  --radius-card: 1.5rem;
+  --radius-panel: 2rem;
+  --shadow-float: 0 8px 24px rgb(11 27 51 / 0.1);
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@layer base {
+  html { @apply bg-canvas text-ink font-sans antialiased; scroll-behavior: smooth; }
+  ::selection { @apply bg-primary-soft text-ink; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-primary; }
+}
+
+/* Type ramp (Figma text styles). Tracking tightens as size grows. */
+@utility text-display-xl { font-size: clamp(2.75rem, 6vw, 4.5rem); line-height: 1.02; letter-spacing: -0.04em; font-weight: 500; }
+@utility text-display-l  { font-size: clamp(2.25rem, 4.5vw, 3.5rem); line-height: 1.04; letter-spacing: -0.035em; font-weight: 500; }
+@utility text-h2 { font-size: clamp(1.875rem, 3.2vw, 2.5rem); line-height: 1.1; letter-spacing: -0.03em; font-weight: 500; }
+@utility text-h3 { font-size: 1.75rem; line-height: 1.2; letter-spacing: -0.02em; font-weight: 500; }
+@utility text-h4 { font-size: 1.25rem; line-height: 1.3; letter-spacing: -0.01em; font-weight: 500; }
+@utility text-body-l { font-size: 1.125rem; line-height: 1.5; letter-spacing: -0.005em; }
+@utility text-label { font-size: 0.875rem; line-height: 1.2; font-weight: 500; }
+@utility text-caption { font-size: 0.75rem; line-height: 1.2; font-weight: 500; }
+
+/* Skeleton shimmer, used under lazy images and while islands hydrate. */
+@utility skeleton {
+  background: linear-gradient(90deg, var(--color-surface-muted) 25%, #eef3f8 50%, var(--color-surface-muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* Entrance reveal. Only hidden when JS is present, so no-JS and crawlers see content. */
+/* Keyframes (not transitions) so the element's own hover transitions stay untouched.
+   `backwards` fill holds the start state during the stagger delay, then releases. */
+.js [data-reveal]:not(.is-visible) { opacity: 0; }
+.js [data-reveal].is-visible {
+  animation: reveal 600ms var(--ease-out-strong) backwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+@keyframes reveal { from { opacity: 0; transform: translateY(16px); } }
+@keyframes reveal-fade { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal].is-visible { animation: reveal-fade 200ms ease backwards; animation-delay: 0ms; }
+  .skeleton { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+@keyframes step-in { from { opacity: 0; transform: translateX(var(--from, 24px)); } }
+@keyframes pop { from { opacity: 0.4; transform: translateY(4px); } }
+
+/* Range input styled as the Figma slider. */
+.range::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--color-primary) var(--pct), var(--color-surface-muted) var(--pct)); }
+.range::-moz-range-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--color-primary) var(--pct), var(--color-surface-muted) var(--pct)); }
+.range::-webkit-slider-thumb { appearance: none; margin-top: -9px; width: 24px; height: 24px; border-radius: 50%; background: white; border: 3px solid var(--color-primary); box-shadow: var(--shadow-float); transition: transform 150ms ease-out; }
+.range:active::-webkit-slider-thumb { transform: scale(1.1); }
+.range::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: white; border: 3px solid var(--color-primary); }
+
+/* Animated <details> height where supported (progressive enhancement). */
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+  .faq::details-content { height: 0; overflow: clip; transition: height 250ms var(--ease-out-strong), content-visibility 250ms allow-discrete; }
+  .faq[open]::details-content { height: auto; }
+}
+
+/* Savings bars grow in when their row is revealed. */
+.bar { width: var(--w); transform-origin: left; }
+.js [data-reveal] .bar { transform: scaleX(0); transition: transform 900ms var(--ease-out-strong) 200ms; }
+.js [data-reveal].is-visible .bar { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) { .js [data-reveal] .bar { transform: none; transition: none; } }

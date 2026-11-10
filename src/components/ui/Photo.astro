@@ -1,0 +1,45 @@
+---
+// Lazy image with a skeleton underneath. Without `src`, renders a labelled placeholder
+// so layouts can ship before real photography arrives.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src?: ImageMetadata | string;
+  alt: string;
+  class?: string;
+  eager?: boolean;
+  sizes?: string;
+  width?: number;
+  height?: number;
+  /** contain = product cut-outs on a flat background; cover = photos. */
+  fit?: 'cover' | 'contain';
+  /** Tailwind object-position class, e.g. "object-right". */
+  position?: string;
+}
+const { src, alt, class: cls, eager = false, sizes, width = 1200, height = 800, fit = 'cover', position } = Astro.props;
+---
+<div class:list={['relative overflow-hidden bg-surface-muted', cls]}>
+  {src ? (
+    <>
+      <div class="skeleton absolute inset-0" aria-hidden="true" />
+      <Image
+        src={src}
+        alt={alt}
+        width={typeof src === 'string' ? width : undefined}
+        height={typeof src === 'string' ? height : undefined}
+        sizes={sizes}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : 'auto'}
+        decoding="async"
+        class:list={['absolute inset-0 size-full opacity-0 transition-opacity duration-500', fit === 'contain' ? 'object-contain p-[6%]' : 'object-cover', position]}
+        onload="this.classList.remove('opacity-0'); this.previousElementSibling?.remove()"
+      />
+    </>
+  ) : (
+    <div class="absolute inset-0 bg-gradient-to-br from-[#d6e3ef] to-[#9ab3cc]" role="img" aria-label={alt}>
+      <span class="absolute bottom-4 left-5 text-caption text-white/90">📷 {alt}</span>
+    </div>
+  )}
+  <slot />
+</div>

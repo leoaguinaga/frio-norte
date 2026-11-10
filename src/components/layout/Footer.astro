@@ -1,0 +1,103 @@
+---
+import Logo from "../ui/Logo.astro";
+import Button from "../ui/Button.astro";
+import { site, whatsappLink } from "../../data/site";
+import { services } from "../../data/services";
+const cols = [
+  {
+    title: "Servicios",
+    links: services.map((s) => ({
+      label: s.title,
+      href: `/servicios/${s.slug}`,
+    })),
+  },
+  {
+    title: "Empresa",
+    links: [
+      { label: "Equipos", href: "/productos" },
+      { label: "Proyectos", href: "/proyectos" },
+      { label: "Nosotros", href: "/nosotros" },
+      { label: "Privacidad", href: "/privacidad" },
+    ],
+  },
+  {
+    title: "Contacto",
+    links: [
+      { label: site.phone, href: site.phoneHref },
+      { label: site.email, href: `mailto:${site.email}` },
+      { label: site.address, href: site.mapsUrl },
+      { label: site.hours },
+    ],
+  },
+];
+---
+
+<footer class="p-4">
+  <div
+    class="mx-auto max-w-[1408px] rounded-[var(--radius-panel)] bg-ink px-6 pb-10 pt-16 text-white sm:px-12 lg:px-[104px] lg:pt-24"
+  >
+    <div
+      class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"
+      data-reveal
+    >
+      <p class="max-w-[620px] text-display-l text-balance">
+        ¿Listo para un ambiente fresco?
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <Button href="/cotizar" variant="brand" size="lg">Cotizar gratis</Button
+        >
+        <Button
+          href={whatsappLink()}
+          variant="secondary"
+          size="lg"
+          target="_blank"
+          rel="noopener">Escribir por WhatsApp</Button
+        >
+      </div>
+    </div>
+    <div class="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="flex flex-col gap-4">
+        <Logo variant="white" size="lg" />
+        <p class="max-w-[300px] text-sm text-white/60">{site.tagline}</p>
+      </div>
+      {
+        cols.map((c) => (
+          <div class="flex flex-col gap-3">
+            <p class="text-label">{c.title}</p>
+            {c.links.map((l) =>
+              l.href ? (
+                <a
+                  href={l.href}
+                  class="text-sm text-white/60 transition-colors hover:text-white"
+                >
+                  {l.label}
+                </a>
+              ) : (
+                <p class="text-sm text-white/60">{l.label}</p>
+              ),
+            )}
+          </div>
+        ))
+      }
+    </div>
+    <div
+      class="mt-16 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 text-caption text-white/50 sm:flex-row"
+    >
+      <p>© {new Date().getFullYear()} {site.legalName}</p>
+      <p class="flex gap-4">
+        {
+          site.social.map((s) => (
+            <a
+              href={s.href}
+              class="hover:text-white"
+              target="_blank"
+              rel="noopener"
+            >
+              {s.label}
+            </a>
+          ))
+        }
+      </p>
+    </div>
+  </div>
+</footer>

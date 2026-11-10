@@ -1,0 +1,5 @@
+---
+const { tone = 'primary' } = Astro.props as { tone?: 'primary' | 'secondary' | 'neutral' };
+const tones = { primary: 'bg-primary-soft text-primary', secondary: 'bg-secondary-soft text-secondary', neutral: 'bg-surface/90 text-ink' };
+---
+<span class:list={['inline-flex w-fit items-center rounded-full px-2.5 py-1 text-caption', tones[tone]]}><slot /></span>

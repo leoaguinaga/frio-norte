@@ -1,0 +1,20 @@
+---
+interface Props { items: { label: string; href?: string }[]; inverse?: boolean }
+const { items, inverse = false } = Astro.props;
+const all = [{ label: 'Inicio', href: '/' }, ...items];
+const json = {
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: all.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.label, item: it.href ? new URL(it.href, Astro.site).href : undefined })),
+};
+---
+<nav aria-label="Migas de pan" class:list={['text-caption', inverse ? 'text-white/60' : 'text-muted']}>
+  <ol class="flex flex-wrap gap-1.5">
+    {all.map((it, i) => (
+      <li class="flex gap-1.5">
+        {i > 0 && <span aria-hidden="true">/</span>}
+        {it.href && i < all.length - 1 ? <a href={it.href} class="hover:text-primary">{it.label}</a> : <span aria-current="page">{it.label}</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(json)} />

@@ -1,0 +1,18 @@
+---
+// Price slot. `value` null/undefined → "Precio a consultar" (prices not confirmed yet).
+interface Props { value?: number | null; label?: string; size?: 'sm' | 'md' | 'lg'; note?: boolean }
+const { value, label = 'Desde', size = 'md', note = true } = Astro.props;
+const fmt = (n: number) => `S/ ${n.toLocaleString('es-PE')}`;
+const sizes = { sm: 'text-base', md: 'text-[22px]', lg: 'text-4xl' };
+---
+<div>
+  {value ? (
+    <p class="flex items-baseline gap-1.5">
+      <span class="text-caption text-muted">{label}</span>
+      <span class:list={['font-mono font-medium tracking-tight', sizes[size]]}>{fmt(value)}</span>
+    </p>
+  ) : (
+    <p class="text-label text-ink">Precio a consultar</p>
+  )}
+  {note && <p class="mt-0.5 text-caption text-muted">Incluye instalación estándar</p>}
+</div>

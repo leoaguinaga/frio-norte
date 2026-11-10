@@ -1,0 +1,14 @@
+---
+import Eyebrow from './Eyebrow.astro';
+interface Props { eyebrow: string; title: string; subtitle?: string; center?: boolean; inverse?: boolean }
+const { eyebrow, title, subtitle, center = false, inverse = false } = Astro.props;
+const hasAction = Astro.slots.has('default');
+---
+<header class:list={['mb-10 flex flex-col gap-6 lg:mb-12', !center && hasAction && 'lg:flex-row lg:items-end lg:justify-between', center && 'items-center text-center']} data-reveal>
+  <div class:list={['flex max-w-[760px] flex-col gap-4', center && 'items-center']}>
+    <Eyebrow inverse={inverse}>{eyebrow}</Eyebrow>
+    <h2 class:list={['text-h2 text-balance', inverse && 'text-white']}>{title}</h2>
+    {subtitle && <p class:list={['max-w-[620px] text-body-l text-pretty', inverse ? 'text-white/70' : 'text-muted']}>{subtitle}</p>}
+  </div>
+  <slot />
+</header>

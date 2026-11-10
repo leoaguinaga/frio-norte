@@ -1,0 +1,13 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import Breadcrumbs from '../ui/Breadcrumbs.astro';
+interface Props { eyebrow: string; title: string; subtitle?: string; crumbs: { label: string; href?: string }[] }
+const { eyebrow, title, subtitle, crumbs } = Astro.props;
+---
+<section class="mx-auto flex max-w-[1440px] flex-col gap-5 px-4 pb-10 pt-12 sm:px-8 lg:px-[120px] lg:pb-14 lg:pt-16">
+  <Breadcrumbs items={crumbs} />
+  <Eyebrow>{eyebrow}</Eyebrow>
+  <h1 class="max-w-[900px] text-display-l text-balance">{title}</h1>
+  {subtitle && <p class="max-w-[640px] text-body-l text-muted text-pretty">{subtitle}</p>}
+  <slot />
+</section>

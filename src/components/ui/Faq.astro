@@ -1,0 +1,20 @@
+---
+import Section from './Section.astro';
+const { items, title = 'Preguntas frecuentes' } = Astro.props as { items: { q: string; a: string }[]; title?: string };
+const json = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: items.map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: i.a } })) };
+---
+<Section>
+  <h2 class="mb-8 text-h2" data-reveal>{title}</h2>
+  <div class="flex flex-col gap-3">
+    {items.map((it, i) => (
+      <details class="faq group rounded-[20px] bg-surface" open={i === 0} data-reveal style={`--i:${i}`}>
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-7 py-5 text-h4">
+          {it.q}
+          <span class="grid size-8 shrink-0 place-items-center rounded-full bg-canvas transition-transform duration-200 ease-out group-open:rotate-45" aria-hidden="true">+</span>
+        </summary>
+        <p class="faq-body px-7 pb-6 text-muted">{it.a}</p>
+      </details>
+    ))}
+  </div>
+</Section>
+<script type="application/ld+json" set:html={JSON.stringify(json)} />
