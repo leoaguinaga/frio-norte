@@ -1,0 +1,49 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import Photo from '../ui/Photo.astro';
+import { images } from '../../lib/images';
+import type { ChecklistGroup } from '../../data/services';
+const { title, groups } = Astro.props as { title: string; groups: ChecklistGroup[] };
+// Hotspots (% of the photo) aligned to the parts visible in unidad-abierta.jpg, in group order.
+const spots: { x: number; y: number; label: string }[] = [
+  { x: 18, y: 50, label: 'Filtros y serpentín' },
+  { x: 50, y: 64, label: 'Bandeja y drenaje' },
+  { x: 88, y: 56, label: 'Tarjeta y conexiones' },
+  { x: 76, y: 41, label: 'Tuberías de refrigerante' },
+];
+---
+<Section>
+  <SectionHeader eyebrow="Qué incluye" title={title} subtitle="Revisamos el equipo completo, no solo los filtros. Cada punto queda registrado en tu informe." />
+  <div class="grid gap-6 lg:grid-cols-[640px_1fr]">
+    <Photo src={images.openUnit} alt="Unidad interior de aire acondicionado con la carcasa abierta" sizes="(min-width:1024px) 640px, 100vw" class="aspect-[16/15] self-start rounded-[28px] lg:sticky lg:top-28">
+      {spots.map(({ x, y, label }, i) => {
+        const flip = x > 55; // keep labels inside the photo on the right half
+        return (
+          <span class:list={['absolute flex -translate-y-1/2 items-center gap-2', flip ? 'flex-row-reverse translate-x-4' : '-translate-x-4']} style={flip ? `right:${100 - x}%;top:${y}%` : `left:${x}%;top:${y}%`}>
+            <span class="grid size-8 shrink-0 place-items-center rounded-full border-[3px] border-surface bg-primary text-label text-white shadow-[var(--shadow-float)]">{i + 1}</span>
+            <span class="hidden whitespace-nowrap rounded-full bg-surface px-2.5 py-1.5 text-caption shadow-[var(--shadow-float)] sm:block">{label}</span>
+          </span>
+        );
+      })}
+    </Photo>
+    <ol class="flex flex-col gap-3">
+      {groups.map((g, i) => (
+        <li class="flex flex-col gap-3.5 rounded-[22px] bg-surface px-6 py-5" data-reveal style={`--i:${i}`}>
+          <div class="flex items-center gap-3">
+            <span class="grid size-[26px] place-items-center rounded-lg bg-primary-soft text-caption text-primary">{i + 1}</span>
+            <h3 class="text-h4">{g.title}</h3>
+            <span class="ml-auto text-caption text-muted">{g.items.length} puntos</span>
+          </div>
+          <ul class="flex flex-wrap gap-2">
+            {g.items.map((it) => (
+              <li class="inline-flex items-center gap-1.5 rounded-full bg-canvas py-1.5 pl-2.5 pr-3 text-caption">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>{it}
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ol>
+  </div>
+</Section>

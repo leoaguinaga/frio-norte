@@ -1,0 +1,19 @@
+---
+import Section from '../ui/Section.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import { stats } from '../../data/home';
+---
+<Section class="flex flex-col items-center gap-12 text-center">
+  <div class="flex flex-col items-center gap-5" data-reveal>
+    <Eyebrow>Sobre Frío Norte</Eyebrow>
+    <p class="max-w-[1000px] text-h2 text-balance">De la asesoría al mantenimiento: sistemas de climatización diseñados, instalados y cuidados por técnicos certificados en todo el norte del Perú.</p>
+  </div>
+  <dl class="grid w-full grid-cols-2 gap-4 lg:grid-cols-4">
+    {stats.map((s, i) => (
+      <div class="flex flex-col gap-1.5 rounded-3xl bg-surface p-7 text-left" data-reveal style={`--i:${i}`}>
+        <dt class="order-2 text-muted">{s.label}</dt>
+        <dd class="text-display-l">{s.value}</dd>
+      </div>
+    ))}
+  </dl>
+</Section>

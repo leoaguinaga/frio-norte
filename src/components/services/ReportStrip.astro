@@ -1,0 +1,24 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+const rows: [string, string, number][] = [['Filtros', 'Limpios', 100], ['Presión de gas', '118 psi', 85], ['Consumo', '6.2 A', 70], ['Drenaje', 'Sin obstrucción', 100]];
+---
+<section class="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-[120px]">
+  <div class="grid items-center gap-10 rounded-[28px] bg-ink p-8 text-white sm:p-14 lg:grid-cols-[1fr_440px]" data-reveal>
+    <div class="flex flex-col gap-4">
+      <Eyebrow inverse>Al terminar</Eyebrow>
+      <h2 class="max-w-[480px] text-h2">Recibes un informe técnico por WhatsApp</h2>
+      <p class="max-w-[440px] text-white/70">Con fotos antes y después, mediciones y recomendaciones. Queda guardado para tu próxima visita.</p>
+    </div>
+    <figure class="flex flex-col gap-3.5 rounded-[20px] bg-surface p-6 text-ink" aria-label="Ejemplo de informe técnico">
+      <div class="flex items-center justify-between"><span class="text-label">Informe #FN-0142</span><span class="rounded-full bg-secondary-soft px-2 py-0.5 text-caption text-secondary">Equipo en buen estado</span></div>
+      <p class="text-sm text-muted">LG Artcool 18,000 BTU · Oficina 2do piso</p>
+      {rows.map(([k, v, pct]) => (
+        <div class="flex flex-col gap-1.5">
+          <div class="flex justify-between text-sm"><span class="text-muted">{k}</span><span class="text-caption">{v}</span></div>
+          <div class="h-1.5 rounded-full bg-surface-muted"><div class="h-full rounded-full bg-secondary" style={`width:${pct}%`}></div></div>
+        </div>
+      ))}
+      <div class="grid grid-cols-2 gap-2">{['Antes', 'Después'].map((l) => <div class="flex h-20 items-end rounded-[10px] bg-surface-muted p-2.5 text-caption text-muted">{l}</div>)}</div>
+    </figure>
+  </div>
+</section>

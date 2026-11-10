@@ -1,11 +1,19 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import Clients from '../components/home/Clients.astro';
+import About from '../components/home/About.astro';
+import ServicesPreview from '../components/home/ServicesPreview.astro';
+import ProductsPreview from '../components/home/ProductsPreview.astro';
+import ProjectsPreview from '../components/home/ProjectsPreview.astro';
+import Testimonial from '../components/home/Testimonial.astro';
 ---
-
-<Layout>
-	<Welcome />
-</Layout>
+<BaseLayout title="Aire acondicionado en Chiclayo y el norte del Perú" description="Venta, instalación y mantenimiento de aire acondicionado LG, Daikin y York en Chiclayo, Piura y Trujillo. Cotización gratis en 24 horas.">
+  <Hero />
+  <Clients />
+  <About />
+  <ServicesPreview />
+  <ProductsPreview />
+  <ProjectsPreview />
+  <Testimonial />
+</BaseLayout>

@@ -1,0 +1,17 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import Button from '../ui/Button.astro';
+import ProjectCard from '../projects/ProjectCard.astro';
+import { getProjects } from '../../lib/contralio';
+const [a, b] = await getProjects();
+---
+<Section>
+  <SectionHeader eyebrow="Proyectos recientes" title="Instalaciones que hablan por nosotros">
+    <Button href="/proyectos" variant="secondary">Ver todos los proyectos</Button>
+  </SectionHeader>
+  <div class="grid gap-4 lg:grid-cols-[1.65fr_1fr]">
+    {a && <ProjectCard project={a} ratio="aspect-[16/10] lg:aspect-auto lg:h-[440px]" />}
+    {b && <ProjectCard project={b} ratio="aspect-[16/10] lg:aspect-auto lg:h-[440px]" i={1} />}
+  </div>
+</Section>

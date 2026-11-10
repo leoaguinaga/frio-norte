@@ -1,0 +1,18 @@
+---
+import Photo from '../ui/Photo.astro';
+import { productImage } from '../../lib/images';
+import Price from '../ui/Price.astro';
+import { formatBtu, typeLabel, type Product } from '../../data/products';
+const { product: p, i = 0, highlight } = Astro.props as { product: Product; i?: number; highlight?: number };
+---
+<a href={`/productos/${p.slug}`} class="group flex flex-col gap-3 rounded-[22px] bg-surface p-5 transition-shadow duration-200 hover:shadow-[var(--shadow-float)]"
+  data-reveal style={`--i:${i % 4}`} data-type={p.type} data-brand={p.brand} data-caps={p.capacities.join(',')}>
+  <div class="flex justify-between text-caption"><span class="uppercase text-muted">{p.brand}</span><span class="text-primary">{typeLabel(p.type)}</span></div>
+  <Photo src={productImage(p.slug)} alt={p.name} fit="contain" sizes="(min-width:1024px) 280px, (min-width:640px) 50vw, 100vw" class="aspect-[8/5] rounded-[14px] !bg-canvas" />
+  <h3 class="text-h4">{p.name}</h3>
+  <ul class="flex flex-wrap gap-1" aria-label="Capacidades disponibles">
+    {p.capacities.map((c) => <li class:list={['rounded-md border px-1.5 py-0.5 font-mono text-xs', c === highlight ? 'border-primary text-primary' : 'border-line text-muted']} data-cap={c}>{formatBtu(c)}</li>)}
+  </ul>
+  <Price value={p.price} size="sm" />
+  <span class="mt-auto flex justify-between pt-1 text-label">Cotizar <span class="text-primary transition-transform duration-200 group-hover:translate-x-1">→</span></span>
+</a>

@@ -1,0 +1,25 @@
+---
+export const prerender = false;
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/ui/Button.astro';
+import { whatsappLink } from '../data/site';
+const id = Astro.url.searchParams.get('id');
+const name = Astro.url.searchParams.get('n');
+const next = ['Revisamos tu solicitud', 'Te contactamos en 24 h', 'Visita técnica y cotización final'];
+---
+<BaseLayout title="¡Gracias!" description="Recibimos tu solicitud de cotización." noindex>
+  <section class="mx-auto flex max-w-[1440px] flex-col items-center gap-7 px-4 pb-32 pt-24 text-center">
+    <span class="grid size-[72px] place-items-center rounded-full bg-secondary text-white motion-safe:animate-[pop_400ms_var(--ease-out-strong)]">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+    </span>
+    <h1 class="max-w-[760px] text-display-l text-balance">¡Gracias{name ? `, ${name}` : ''}! Recibimos tu solicitud</h1>
+    <p class="max-w-[600px] text-body-l text-muted">Un asesor te escribirá por WhatsApp en menos de 24 horas con tu cotización.{id && <> Código de solicitud: <strong class="font-mono text-ink">{id}</strong>.</>}</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <Button href={whatsappLink(`Hola, acabo de enviar la solicitud ${id ?? ''}`)} variant="brand" size="lg" target="_blank" rel="noopener">Hablar ahora por WhatsApp</Button>
+      <Button href="/proyectos" variant="secondary" size="lg">Ver proyectos</Button>
+    </div>
+    <ol class="mt-10 grid gap-4 sm:grid-cols-3">
+      {next.map((t, i) => <li class="flex w-[260px] flex-col gap-2 rounded-[20px] bg-surface p-6 text-left" data-reveal style={`--i:${i}`}><span class="text-h3 text-primary">{i + 1}</span><span class="text-label">{t}</span></li>)}
+    </ol>
+  </section>
+</BaseLayout>

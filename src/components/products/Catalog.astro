@@ -1,0 +1,59 @@
+---
+// Full catalog. Rendered server-side for SEO; filters run client-side on data attributes.
+import Section from '../ui/Section.astro';
+import ProductCard from './ProductCard.astro';
+import { products, installTypes, brands } from '../../data/products';
+const select = 'h-9 cursor-pointer appearance-none rounded-full bg-canvas px-4 text-caption';
+---
+<Section id="catalogo">
+  <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <h2 class="text-h3">Todo el catálogo</h2>
+    <form class="flex flex-wrap items-center gap-2 rounded-full bg-surface p-1.5" data-catalog-filters aria-label="Filtrar equipos">
+      <select name="tipo" class={select} aria-label="Tipo"><option value="">Tipo</option>{installTypes.map((t) => <option value={t.id}>{t.label}</option>)}</select>
+      <select name="marca" class={select} aria-label="Marca"><option value="">Marca</option>{brands.map((b) => <option>{b.name}</option>)}</select>
+      <select name="btu" class={select} aria-label="Capacidad"><option value="">BTU</option>{[9000, 12000, 18000, 24000, 36000, 48000, 60000].map((b) => <option value={b}>{b.toLocaleString('en-US')} BTU</option>)}</select>
+      <button type="reset" class="h-9 rounded-full bg-ink px-4 text-caption text-white" hidden data-clear>Limpiar ✕</button>
+    </form>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-catalog-grid>
+    {products.map((p, i) => <ProductCard product={p} i={i} />)}
+  </div>
+  <p class="py-16 text-center text-muted" hidden data-empty>No hay equipos con esos filtros. <a href="/cotizar" class="text-primary underline">Te asesoramos gratis</a>.</p>
+</Section>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-catalog-filters]')!;
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-catalog-grid] > a')];
+  const empty = document.querySelector<HTMLElement>('[data-empty]')!;
+  const clear = form.querySelector<HTMLButtonElement>('[data-clear]')!;
+
+  function apply() {
+    const f = new FormData(form);
+    const tipo = String(f.get('tipo') ?? ''), marca = String(f.get('marca') ?? ''), btu = String(f.get('btu') ?? '');
+    let shown = 0;
+    for (const c of cards) {
+      const ok = (!tipo || c.dataset.type === tipo) && (!marca || c.dataset.brand === marca) && (!btu || c.dataset.caps!.split(',').includes(btu));
+      c.hidden = !ok;
+      if (ok) shown++;
+      c.querySelectorAll<HTMLElement>('[data-cap]').forEach((el) => {
+        const on = el.dataset.cap === btu;
+        el.classList.toggle('border-primary', on); el.classList.toggle('text-primary', on);
+        el.classList.toggle('border-line', !on); el.classList.toggle('text-muted', !on);
+      });
+    }
+    empty.hidden = shown > 0;
+    clear.hidden = !(tipo || marca || btu);
+    const qs = new URLSearchParams([...f].filter(([, v]) => v) as [string, string][]);
+    history.replaceState(null, '', `${location.pathname}${qs.size ? `?${qs}` : ''}#catalogo`);
+  }
+
+  // Prefill from URL (?btu= from calculator, ?tipo= from install types).
+  const params = new URLSearchParams(location.search);
+  for (const k of ['tipo', 'marca', 'btu']) {
+    const el = form.elements.namedItem(k) as HTMLSelectElement;
+    if (params.get(k)) el.value = params.get(k)!;
+  }
+  form.addEventListener('change', apply);
+  form.addEventListener('reset', () => setTimeout(apply));
+  if ([...params.keys()].length) apply();
+</script>

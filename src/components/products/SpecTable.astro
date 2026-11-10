@@ -1,0 +1,17 @@
+---
+import Section from '../ui/Section.astro';
+import { typeLabel, type Product } from '../../data/products';
+const { product: p } = Astro.props as { product: Product };
+const rows: [string, string][] = [
+  ['Capacidad', p.capacities.map((c) => c.toLocaleString('en-US')).join(' / ') + ' BTU/h'],
+  ['Tipo', typeLabel(p.type)], ['Modo', p.mode],
+  ...(p.featured ? ([['Eficiencia', `SEER ${p.featured.seer}`], ['Ruido mínimo', `${p.featured.db} dB`], ['Área recomendada', `${p.featured.area} m²`]] as [string, string][]) : []),
+  ...p.specs,
+];
+---
+<Section class="!pt-0">
+  <h2 class="mb-8 text-h2" data-reveal>Especificaciones técnicas</h2>
+  <dl class="rounded-3xl bg-surface p-2" data-reveal>
+    {rows.map(([k, v]) => <div class="flex justify-between gap-6 rounded-[14px] px-6 py-4 odd:bg-canvas"><dt class="text-muted">{k}</dt><dd class="text-right text-label">{v}</dd></div>)}
+  </dl>
+</Section>

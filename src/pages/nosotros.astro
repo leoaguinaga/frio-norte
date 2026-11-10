@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/layout/PageHeader.astro';
+import Photo from '../components/ui/Photo.astro';
+import Story from '../components/about/Story.astro';
+import Values from '../components/about/Values.astro';
+import Location from '../components/about/Location.astro';
+import { images } from '../lib/images';
+---
+<BaseLayout title="Nosotros" description="Más de 11 años climatizando el norte del Perú. Distribuidores autorizados LG con equipo técnico propio y showroom en Chiclayo.">
+  <PageHeader eyebrow="Nosotros" title="Más de 11 años climatizando el norte del Perú" subtitle="Somos distribuidores autorizados LG con un equipo técnico propio y showroom en Chiclayo." crumbs={[{ label: 'Nosotros' }]} />
+  <div class="px-4"><Photo src={images.team} alt="Equipo de Frío Norte en el showroom de Chiclayo" eager sizes="100vw" class="mx-auto aspect-[16/9] max-w-[1408px] rounded-[var(--radius-panel)] lg:aspect-auto lg:h-[560px]" /></div>
+  <Story />
+  <Values />
+  <Location />
+</BaseLayout>

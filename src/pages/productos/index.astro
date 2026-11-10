@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CalculatorHero from '../../components/products/CalculatorHero.astro';
+import InstallTypes from '../../components/products/InstallTypes.astro';
+import Section from '../../components/ui/Section.astro';
+import SectionHeader from '../../components/ui/SectionHeader.astro';
+import FeaturedRow from '../../components/products/FeaturedRow.astro';
+import Catalog from '../../components/products/Catalog.astro';
+import BrandsCta from '../../components/products/BrandsCta.astro';
+import { products } from '../../data/products';
+const featured = products.filter((p) => p.featured);
+---
+<BaseLayout title="Equipos de aire acondicionado LG, Daikin y York" description="Calcula los BTU que necesitas y elige entre split, cassette, techo, ventana, portátil y Multi V. Precios con instalación en Chiclayo y el norte.">
+  <CalculatorHero />
+  <InstallTypes />
+  <Section class="!pt-0">
+    <SectionHeader eyebrow="Distribuidor exclusivo LG en el norte" title="Los más elegidos este verano" />
+    <div class="flex flex-col gap-4">{featured.map((p) => <FeaturedRow product={p} />)}</div>
+  </Section>
+  <Catalog />
+  <BrandsCta />
+</BaseLayout>

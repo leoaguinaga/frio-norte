@@ -1,0 +1,20 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductHero from '../../components/products/ProductHero.astro';
+import SpecTable from '../../components/products/SpecTable.astro';
+import RelatedProducts from '../../components/products/RelatedProducts.astro';
+import { products, type Product } from '../../data/products';
+
+export const getStaticPaths = (() => products.map((product) => ({ params: { slug: product.slug }, props: { product } }))) satisfies GetStaticPaths;
+const { product: p } = Astro.props as { product: Product };
+const jsonLd = {
+  '@context': 'https://schema.org', '@type': 'Product', name: p.name, brand: { '@type': 'Brand', name: p.brand }, description: p.summary,
+  ...(p.price && { offers: { '@type': 'Offer', priceCurrency: 'PEN', price: p.price, availability: 'https://schema.org/InStock' } }),
+};
+---
+<BaseLayout title={`${p.name} con instalación`} description={`${p.summary} Capacidades de ${p.capacities.map((c) => c.toLocaleString('en-US')).join(', ')} BTU. Cotiza con instalación en Chiclayo y el norte.`} jsonLd={jsonLd}>
+  <ProductHero product={p} />
+  <SpecTable product={p} />
+  <RelatedProducts product={p} />
+</BaseLayout>

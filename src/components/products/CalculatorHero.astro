@@ -1,0 +1,24 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import Breadcrumbs from '../ui/Breadcrumbs.astro';
+import BtuCalculator from './BtuCalculator';
+import { products, brands } from '../../data/products';
+const kpis = [[String(products.length), 'modelos en catálogo'], [String(brands.length), 'marcas autorizadas'], ['5 años', 'garantía compresor']];
+---
+<section class="px-4 pt-2">
+  <div class="relative mx-auto grid max-w-[1408px] items-center gap-12 overflow-hidden rounded-[var(--radius-panel)] bg-ink px-6 py-14 text-white sm:px-12 lg:grid-cols-[1fr_460px] lg:py-[72px] lg:pl-[88px] lg:pr-14">
+    <div class="pointer-events-none absolute -left-52 -top-72 size-[700px] rounded-full bg-[radial-gradient(circle,rgb(31_116_208/0.55),transparent_70%)]" aria-hidden="true"></div>
+    <div class="relative flex flex-col gap-6">
+      <Breadcrumbs items={[{ label: 'Equipos' }]} inverse />
+      <Eyebrow inverse>Equipos LG · Daikin · York</Eyebrow>
+      <h1 class="max-w-[600px] text-display-xl text-balance">¿Cuánto frío necesita tu espacio?</h1>
+      <p class="max-w-[500px] text-body-l text-white/70">Calcula la capacidad en BTU y te mostramos solo los equipos que sirven. Sin adivinar, sin pagar de más.</p>
+      <dl class="flex flex-wrap gap-8 pt-2">
+        {kpis.map(([v, l]) => <div><dd class="font-mono text-[28px] font-medium tracking-tight">{v}</dd><dt class="text-sm text-white/60">{l}</dt></div>)}
+      </dl>
+    </div>
+    <div class="relative min-h-[540px]">
+      <BtuCalculator client:idle capacities={products.map((p) => p.capacities)} />
+    </div>
+  </div>
+</section>

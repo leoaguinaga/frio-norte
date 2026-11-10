@@ -1,0 +1,20 @@
+---
+import Section from '../ui/Section.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import Button from '../ui/Button.astro';
+import { site } from '../../data/site';
+const rows = [['Dirección', site.address], ['Horario', site.hours], ['Teléfono', site.phone], ['Correo', site.email]];
+---
+<Section class="!pt-0">
+  <div class="grid gap-4 lg:grid-cols-[440px_1fr]">
+    <div class="flex flex-col gap-5 rounded-[28px] bg-surface p-10" data-reveal>
+      <Eyebrow>Visítanos</Eyebrow>
+      <h2 class="text-h3">Showroom Chiclayo</h2>
+      <dl class="flex flex-col gap-4">{rows.map(([k, v]) => <div><dt class="text-caption text-muted">{k}</dt><dd class="mt-1">{v}</dd></div>)}</dl>
+      <Button href={site.mapsUrl} size="lg" target="_blank" rel="noopener">Cómo llegar</Button>
+    </div>
+    <div class="skeleton min-h-[420px] overflow-hidden rounded-[28px]" data-reveal style="--i:1">
+      <iframe title="Mapa de Frío Norte en Chiclayo" src="https://www.google.com/maps?q=Prolongacion+Bolognesi+Chiclayo&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="size-full min-h-[420px] border-0"></iframe>
+    </div>
+  </div>
+</Section>

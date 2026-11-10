@@ -1,0 +1,11 @@
+---
+import Button from '../ui/Button.astro';
+import type { Project } from '../../lib/contralio';
+const { project: p } = Astro.props as { project: Project };
+const facts = [['Cliente', p.client], ['Sector', p.sector], ['Ubicación', p.city], ['Año', String(p.year)], ['Servicios', p.services.join(' · ')], ['Sistema', p.system]];
+---
+<aside class="h-fit rounded-[28px] bg-surface px-7 pb-7 pt-3 lg:sticky lg:top-28">
+  <dl>{facts.map(([k, v]) => <div class="flex justify-between gap-6 border-b border-line py-4"><dt class="text-sm text-muted">{k}</dt><dd class="text-right text-label">{v}</dd></div>)}</dl>
+  <p class="mb-3 mt-5 text-h4">¿Necesitas algo similar?</p>
+  <Button href={`/cotizar?proyecto=${p.slug}`} size="lg" full>Quiero un proyecto similar</Button>
+</aside>

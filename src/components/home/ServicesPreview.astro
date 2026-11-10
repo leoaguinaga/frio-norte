@@ -1,0 +1,15 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import Button from '../ui/Button.astro';
+import ServiceCard from '../services/ServiceCard.astro';
+import { services } from '../../data/services';
+---
+<Section>
+  <SectionHeader eyebrow="Servicios" title="Todo el ciclo de tu sistema de aire acondicionado">
+    <Button href="/servicios" variant="secondary">Ver todos los servicios</Button>
+  </SectionHeader>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {services.map((s, i) => <ServiceCard service={s} i={i} />)}
+  </div>
+</Section>

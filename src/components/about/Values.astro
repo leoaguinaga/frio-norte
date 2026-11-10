@@ -1,0 +1,20 @@
+---
+import Section from '../ui/Section.astro';
+const values = [
+  ['Distribuidores LG', 'Acceso directo a equipos, repuestos y soporte de ingeniería.'],
+  ['Técnicos certificados', 'Capacitación continua en las últimas tecnologías.'],
+  ['Showroom en Chiclayo', 'Ve y prueba los equipos antes de decidir.'],
+  ['Respuesta en 24 h', 'Cotizaciones y atención sin demoras.'],
+];
+---
+<Section class="!pt-0">
+  <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {values.map(([t, d], i) => (
+      <li class="flex flex-col gap-2.5 rounded-3xl bg-surface p-7" data-reveal style={`--i:${i}`}>
+        <span class="mb-1 size-9 rounded-[10px] bg-primary-soft" aria-hidden="true"></span>
+        <h3 class="text-h4">{t}</h3>
+        <p class="text-sm text-muted">{d}</p>
+      </li>
+    ))}
+  </ul>
+</Section>

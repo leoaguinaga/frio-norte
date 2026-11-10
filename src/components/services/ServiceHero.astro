@@ -1,0 +1,22 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import Breadcrumbs from '../ui/Breadcrumbs.astro';
+import Photo from '../ui/Photo.astro';
+import { serviceImage } from '../../lib/images';
+import QuoteForm from '../forms/QuoteForm';
+import type { Service } from '../../data/services';
+const { service: s } = Astro.props as { service: Service };
+---
+<section class="mx-auto grid max-w-[1440px] gap-10 px-4 pb-16 pt-12 sm:px-8 lg:grid-cols-[1fr_400px] lg:gap-16 lg:px-[120px]">
+  <div class="flex flex-col gap-6">
+    <Breadcrumbs items={[{ label: 'Servicios', href: '/servicios' }, { label: s.title }]} />
+    <Eyebrow>Servicio</Eyebrow>
+    <h1 class="max-w-[700px] text-display-l text-balance">{s.title}</h1>
+    <p class="max-w-[620px] text-body-l text-muted text-pretty">{s.description}</p>
+    <ul class="flex flex-wrap gap-x-6 gap-y-2 text-label">{s.highlights.map((h) => <li>✓ {h}</li>)}</ul>
+    <Photo src={serviceImage(s.slug)} alt={`${s.title} en Chiclayo`} eager sizes="(min-width:1024px) 760px, 100vw" class="mt-2 aspect-[16/9] rounded-[28px]" />
+  </div>
+  <aside class="h-fit rounded-[28px] bg-surface p-8 shadow-[var(--shadow-float)] lg:sticky lg:top-28">
+    <QuoteForm client:idle title={`Cotiza tu ${s.title.toLowerCase()}`} subtitle="Respuesta en menos de 24 horas." service={s.title} showCity />
+  </aside>
+</section>

@@ -1,0 +1,14 @@
+---
+import Photo from '../ui/Photo.astro';
+import { serviceImage } from '../../lib/images';
+import type { Service } from '../../data/services';
+const { service, i = 0 } = Astro.props as { service: Service; i?: number };
+---
+<a href={`/servicios/${service.slug}`} class="group flex flex-col gap-4 rounded-3xl bg-surface p-2 pb-6 transition-shadow duration-200 hover:shadow-[var(--shadow-float)]" data-reveal style={`--i:${i}`}>
+  <Photo src={serviceImage(service.slug)} alt={service.title} sizes="(min-width:1024px) 320px, (min-width:640px) 50vw, 100vw" class="aspect-[4/3] rounded-[18px]" />
+  <div class="flex flex-col gap-2 px-4">
+    <h3 class="text-h4">{service.title}</h3>
+    <p class="text-sm text-muted">{service.short}</p>
+    <span class="text-label">Ver servicio <span class="inline-block transition-transform duration-200 group-hover:translate-x-1">→</span></span>
+  </div>
+</a>

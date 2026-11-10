@@ -1,0 +1,12 @@
+---
+import Section from '../ui/Section.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import { testimonial as t } from '../../data/home';
+---
+<Section class="flex flex-col items-center gap-7 text-center">
+  <Eyebrow>Testimonios</Eyebrow>
+  <figure class="flex flex-col items-center gap-7" data-reveal>
+    <blockquote class="max-w-[960px] text-h2 text-balance">“{t.quote}”</blockquote>
+    <figcaption class="text-label text-muted">{t.author} · {t.company}</figcaption>
+  </figure>
+</Section>

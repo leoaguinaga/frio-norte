@@ -1,0 +1,23 @@
+---
+// Alternating wide/narrow rows like the Figma layout. Sector chips filter client-side.
+import ProjectCard from './ProjectCard.astro';
+import type { Project } from '../../lib/contralio';
+const { projects } = Astro.props as { projects: Project[] };
+const sectors = ['Todos', ...new Set(projects.map((p) => p.sector))];
+---
+<div class="mx-auto max-w-[1440px] px-4 pb-24 sm:px-8 lg:px-[120px]">
+  <div class="mb-8 flex flex-wrap gap-2" role="group" aria-label="Filtrar por sector" data-sector-filters>
+    {sectors.map((s, i) => <button type="button" data-sector={s} aria-pressed={i === 0 ? 'true' : 'false'} class="rounded-full bg-surface px-4 py-2 text-caption transition-colors duration-150 aria-pressed:bg-ink aria-pressed:text-white">{s}</button>)}
+  </div>
+  <div class="grid gap-x-4 gap-y-10 lg:grid-cols-12" data-project-grid>
+    {projects.map((p, i) => <ProjectCard project={p} i={i % 2} class={[0, 3].includes(i % 4) ? "lg:col-span-7" : "lg:col-span-5"} ratio="aspect-[16/10] lg:aspect-auto lg:h-[420px]" />)}
+  </div>
+</div>
+<script>
+  const btns = [...document.querySelectorAll<HTMLButtonElement>('[data-sector-filters] button')];
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-project-grid] > a')];
+  btns.forEach((b) => b.addEventListener('click', () => {
+    btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    cards.forEach((c) => { c.hidden = b.dataset.sector !== 'Todos' && c.dataset.sector !== b.dataset.sector; });
+  }));
+</script>

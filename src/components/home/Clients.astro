@@ -1,0 +1,10 @@
+---
+import Section from '../ui/Section.astro';
+import { clients } from '../../data/home';
+---
+<Section tight class="flex flex-col items-center gap-7">
+  <p class="text-label text-muted" data-reveal>Más de 100 empresas e instituciones confían en nosotros</p>
+  <ul class="flex flex-wrap justify-center gap-x-14 gap-y-4" data-reveal>
+    {clients.map((c) => <li class="text-h4 text-muted/70">{c}</li>)}
+  </ul>
+</Section>

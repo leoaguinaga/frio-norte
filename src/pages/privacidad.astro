@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/layout/PageHeader.astro';
+import { site } from '../data/site';
+// TODO(Frío Norte): legal review.
+const sections = [
+  ['1. Responsable', `${site.legalName}, con domicilio en ${site.address}, es responsable del tratamiento de tus datos personales conforme a la Ley N.° 29733 y su reglamento.`],
+  ['2. Datos que recopilamos', 'Nombre, teléfono, correo, ciudad y la información que nos compartes sobre tu proyecto.'],
+  ['3. Finalidad', 'Responder tu solicitud de cotización, coordinar visitas técnicas y dar seguimiento comercial. Tus datos se gestionan en nuestro CRM (Contralio).'],
+  ['4. Tus derechos', `Puedes ejercer tus derechos de acceso, rectificación, cancelación y oposición escribiendo a ${site.email}.`],
+];
+---
+<BaseLayout title="Política de privacidad" description="Cómo Frío Norte trata tus datos personales.">
+  <PageHeader eyebrow="Legal" title="Política de privacidad" subtitle="Última actualización: noviembre 2026" crumbs={[{ label: 'Privacidad' }]} />
+  <article class="mx-auto mb-28 flex max-w-[800px] flex-col gap-7 rounded-[28px] bg-surface p-8 sm:p-14">
+    {sections.map(([t, b]) => <section class="flex flex-col gap-2.5"><h2 class="text-h4">{t}</h2><p class="text-muted">{b}</p></section>)}
+  </article>
+</BaseLayout>

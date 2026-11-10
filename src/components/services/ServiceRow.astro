@@ -1,0 +1,20 @@
+---
+import Photo from '../ui/Photo.astro';
+import { serviceImage } from '../../lib/images';
+import Button from '../ui/Button.astro';
+import type { Service } from '../../data/services';
+const { service: s, index } = Astro.props as { service: Service; index: number };
+---
+<article class="grid items-center gap-8 rounded-[var(--radius-panel)] bg-surface p-4 lg:grid-cols-[520px_1fr] lg:gap-12 lg:pr-12" data-reveal>
+  <Photo src={serviceImage(s.slug)} alt={s.title} sizes="(min-width:1024px) 520px, 100vw" class="aspect-[3/2] rounded-[20px]" />
+  <div class="flex flex-col gap-4 px-2 pb-4 lg:p-0">
+    <p class="font-mono text-label text-primary">{String(index + 1).padStart(2, '0')}</p>
+    <h2 class="text-h2">{s.title}</h2>
+    <p class="max-w-[560px] text-muted text-pretty">{s.description}</p>
+    <p class="text-caption text-muted">{s.audience}</p>
+    <div class="flex flex-wrap gap-3 pt-1">
+      <Button href={`/cotizar?servicio=${encodeURIComponent(s.title)}`}>Cotizar este servicio</Button>
+      <Button href={`/servicios/${s.slug}`} variant="secondary">Ver detalle</Button>
+    </div>
+  </div>
+</article>

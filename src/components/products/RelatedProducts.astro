@@ -1,0 +1,11 @@
+---
+import Section from '../ui/Section.astro';
+import ProductCard from './ProductCard.astro';
+import { products, type Product } from '../../data/products';
+const { product } = Astro.props as { product: Product };
+const related = [...products.filter((p) => p.slug !== product.slug && p.type === product.type), ...products.filter((p) => p.type !== product.type)].slice(0, 4);
+---
+<Section class="!pt-0">
+  <h2 class="mb-8 text-h3" data-reveal>También te puede interesar</h2>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{related.map((p, i) => <ProductCard product={p} i={i} />)}</div>
+</Section>

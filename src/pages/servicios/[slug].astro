@@ -1,0 +1,24 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServiceHero from '../../components/services/ServiceHero.astro';
+import Checklist from '../../components/services/Checklist.astro';
+import ReportStrip from '../../components/services/ReportStrip.astro';
+import Process from '../../components/services/Process.astro';
+import Faq from '../../components/ui/Faq.astro';
+import { services, type Service } from '../../data/services';
+
+export const getStaticPaths = (() => services.map((service) => ({ params: { slug: service.slug }, props: { service } }))) satisfies GetStaticPaths;
+const { service } = Astro.props as { service: Service };
+const jsonLd = { '@context': 'https://schema.org', '@type': 'Service', name: service.title, description: service.description, provider: { '@type': 'HVACBusiness', name: 'Frío Norte' }, areaServed: 'Norte del Perú' };
+---
+<BaseLayout title={`${service.title} de aire acondicionado`} description={service.description} jsonLd={jsonLd}>
+  <ServiceHero service={service} />
+  {service.checklist ? (
+    <>
+      <Checklist title={service.checklist.title} groups={service.checklist.groups} />
+      <ReportStrip />
+    </>
+  ) : <Process />}
+  <Faq items={service.faq} />
+</BaseLayout>

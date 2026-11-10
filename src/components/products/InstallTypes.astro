@@ -1,0 +1,24 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import InstallDiagram from './InstallDiagram.astro';
+import { installTypes, products } from '../../data/products';
+const count = (t: string) => products.filter((p) => p.type === t).length;
+---
+<Section>
+  <SectionHeader eyebrow="Por tipo de instalación" title="Cada espacio pide un equipo distinto">
+    <p class="max-w-[340px] text-muted">Si no sabes cuál es el tuyo, una visita técnica gratuita lo resuelve.</p>
+  </SectionHeader>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {installTypes.map((t, i) => (
+      <a href={`?tipo=${t.id}#catalogo`} data-filter-type={t.id} class="group flex flex-col gap-1.5 rounded-3xl bg-surface p-6 ring-primary transition-shadow duration-200 hover:ring-[1.5px]" data-reveal style={`--i:${i % 3}`}>
+        <div class="grid place-items-center rounded-2xl bg-canvas pb-5 pt-3"><InstallDiagram type={t.id} /></div>
+        <div class="flex items-center justify-between pt-3">
+          <h3 class="text-h4">{t.label}</h3>
+          <span class="text-caption text-muted">{t.id === 'vrf' ? 'A medida' : `${count(t.id)} modelos`}</span>
+        </div>
+        <p class="text-sm text-muted">{t.use}</p>
+      </a>
+    ))}
+  </div>
+</Section>

@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/layout/PageHeader.astro';
+import ServiceRow from '../../components/services/ServiceRow.astro';
+import Process from '../../components/services/Process.astro';
+import { services } from '../../data/services';
+---
+<BaseLayout title="Servicios de aire acondicionado" description="Asesoría de proyectos, instalación, mantenimiento preventivo y correctivo de aire acondicionado en el norte del Perú.">
+  <PageHeader eyebrow="Servicios" title="Soluciones de climatización de principio a fin" subtitle="Un solo equipo responsable del proyecto, la instalación y el mantenimiento de tus equipos." crumbs={[{ label: 'Servicios' }]} />
+  <div class="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 sm:px-8 lg:px-[120px]">
+    {services.map((s, i) => <ServiceRow service={s} index={i} />)}
+  </div>
+  <Process />
+</BaseLayout>

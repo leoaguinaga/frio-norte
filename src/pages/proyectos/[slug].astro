@@ -1,0 +1,42 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Photo from '../../components/ui/Photo.astro';
+import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
+import Section from '../../components/ui/Section.astro';
+import ProjectFacts from '../../components/projects/ProjectFacts.astro';
+import ProjectCard from '../../components/projects/ProjectCard.astro';
+import { getProjects, type Project } from '../../lib/contralio';
+import { projectImage, projectGallery } from '../../lib/images';
+
+// Pre-rendered from Contralio at build time; a webhook rebuild publishes new projects.
+export const getStaticPaths = (async () => {
+  const all = await getProjects();
+  return all.map((project) => ({ params: { slug: project.slug }, props: { project, others: all.filter((o) => o.slug !== project.slug).slice(0, 3) } }));
+}) satisfies GetStaticPaths;
+const { project: p, others } = Astro.props as { project: Project; others: Project[] };
+---
+<BaseLayout title={`${p.title} — proyecto de climatización`} description={`${p.summary} ${p.system} en ${p.city}, ${p.year}.`}>
+  <div class="px-4 pt-2">
+    <Photo src={p.cover ?? projectImage(p.slug)} alt={p.title} eager sizes="100vw" class="mx-auto h-[460px] max-w-[1408px] rounded-[var(--radius-panel)] lg:h-[620px]">
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent from-40% to-ink/80" aria-hidden="true"></div>
+      <div class="absolute bottom-10 left-6 flex flex-col gap-3 text-white sm:left-14">
+        <Breadcrumbs items={[{ label: 'Proyectos', href: '/proyectos' }, { label: p.title }]} inverse />
+        <h1 class="text-display-l">{p.title}</h1>
+        <p class="text-body-l text-white/80">{p.summary}</p>
+      </div>
+    </Photo>
+  </div>
+  <Section class="grid gap-12 lg:grid-cols-[1fr_400px] lg:gap-20">
+    <div class="flex flex-col gap-6" data-reveal>
+      {p.challenge && <><h2 class="text-h3">El reto</h2><p class="max-w-[640px] text-body-l text-muted">{p.challenge}</p></>}
+      {p.solution && <><h2 class="text-h3">La solución</h2><p class="max-w-[640px] text-body-l text-muted">{p.solution}</p></>}
+      <div class="grid grid-cols-3 gap-3">{[1, 2, 3].map((i) => <Photo src={p.gallery?.[i - 1] ?? projectGallery(p.slug)[i - 1]} sizes="(min-width:1024px) 240px, 33vw" alt={`${p.title} foto ${i}`} class="aspect-[10/9] rounded-[20px]" />)}</div>
+    </div>
+    <ProjectFacts project={p} />
+  </Section>
+  <Section class="!pt-0">
+    <h2 class="mb-8 text-h2">Más proyectos</h2>
+    <div class="grid gap-4 md:grid-cols-3">{others.map((o, i) => <ProjectCard project={o} i={i} />)}</div>
+  </Section>
+</BaseLayout>
