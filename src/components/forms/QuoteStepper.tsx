@@ -6,7 +6,7 @@ import { useLeadSubmit } from './useLeadSubmit';
 const steps = ['Necesidad', 'Espacio', 'Contacto'] as const;
 const segments = [
   { value: 'hogar', label: 'Hogar', hint: 'Dormitorio, sala' },
-  { value: 'empresa', label: 'Oficina / comercio', hint: 'Hasta 500 m²' },
+  { value: 'empresa', label: 'Oficina / comercio', hint: 'Hasta 1,500 m³' },
   { value: 'industria', label: 'Industria / edificio', hint: 'Proyecto a medida' },
 ];
 
@@ -87,7 +87,7 @@ export default function QuoteStepper({ service, product, projectRef, equipment }
       <div {...panel(1)}>
         <p className="text-h3">Cuéntanos del espacio</p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Área aproximada (m²)" name="area" type="number" min={1} inputMode="numeric" placeholder="120" error={errors.area} />
+          <Field label="Volumen aproximado (m³)" name="volume" type="number" min={1} inputMode="numeric" placeholder="300" error={errors.volume} />
           <Select label="Ciudad" name="city" options={cityOptions} />
         </div>
         <TextArea label="Comentarios (opcional)" name="message" placeholder="Ej: oficinas en 2do piso, ya tenemos ductos…" />

@@ -19,7 +19,7 @@ export const server = {
       capacity: opt.pipe(z.coerce.number().int().positive().optional()),
       projectRef: opt,
       city: opt,
-      area: opt.pipe(z.coerce.number().positive('Ingresa un área válida').optional()),
+      volume: opt.pipe(z.coerce.number().positive('Ingresa un volumen válido').optional()),
       message: opt.pipe(z.string().max(1000).optional()),
       page: opt.transform((v) => v ?? '/'),
       utm: opt,

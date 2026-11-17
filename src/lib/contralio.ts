@@ -18,7 +18,7 @@ export type Lead = {
   capacity?: number;
   projectRef?: string;
   city?: string;
-  area?: number;
+  volume?: number; // m³ (largo × ancho × alto)
   message?: string;
   source: { page: string; utm?: Record<string, string> };
 };
