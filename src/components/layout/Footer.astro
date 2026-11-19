@@ -3,6 +3,9 @@ import Logo from "../ui/Logo.astro";
 import Button from "../ui/Button.astro";
 import { site, whatsappLink } from "../../data/site";
 import { services } from "../../data/services";
+
+interface Props { ctaTitle?: string; cta?: { label: string; href: string } }
+const { ctaTitle = "¿Listo para un ambiente fresco?", cta = { label: "Cotizar gratis", href: "/cotizar" } } = Astro.props;
 const cols = [
   {
     title: "Servicios",
@@ -41,11 +44,10 @@ const cols = [
       data-reveal
     >
       <p class="max-w-[620px] text-display-l text-balance">
-        ¿Listo para un ambiente fresco?
+        {ctaTitle}
       </p>
       <div class="flex flex-wrap gap-3">
-        <Button href="/cotizar" variant="brand" size="lg">Cotizar gratis</Button
-        >
+        <Button href={cta.href} variant="brand" size="lg">{cta.label}</Button>
         <Button
           href={whatsappLink()}
           variant="secondary"

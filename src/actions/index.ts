@@ -27,6 +27,11 @@ export const server = {
       city: opt,
       volume: opt.pipe(z.coerce.number().positive('Ingresa un volumen válido').optional()),
       message: opt.pipe(z.string().max(1000).optional()),
+      // Wholesale meeting (/mayoristas). `company` is the honeypot, so the business name uses another key.
+      businessName: opt.pipe(z.string().min(2, 'Ingresa el nombre de tu empresa').max(120).optional()),
+      ruc: opt.pipe(z.string().regex(/^\d{11}$/, 'El RUC tiene 11 dígitos').optional()),
+      monthlyUnits: opt,
+      preferredTime: opt,
       photos: z.array(photo).max(MAX_PHOTOS, `Máximo ${MAX_PHOTOS} fotos`).optional(),
       page: opt.transform((v) => v ?? '/'),
       utm: opt,

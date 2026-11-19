@@ -22,6 +22,11 @@ export type Lead = {
   city?: string;
   volume?: number; // m³ (largo × ancho × alto)
   message?: string;
+  /** Wholesale meeting fields (/mayoristas). */
+  businessName?: string;
+  ruc?: string;
+  monthlyUnits?: string;
+  preferredTime?: string;
   source: { page: string; utm?: Record<string, string> };
 };
 

@@ -23,6 +23,7 @@ export const nav = [
   { label: 'Equipos', href: '/productos' },
   { label: 'Proyectos', href: '/proyectos' },
   { label: 'Nosotros', href: '/nosotros' },
+  { label: 'Mayoristas', href: '/mayoristas' },
 ] as const;
 
 export const whatsappLink = (text = 'Hola, quiero una cotización') =>
