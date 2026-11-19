@@ -2,8 +2,10 @@ import { useRef, useState } from 'react';
 import { Field, Hidden, Select, TextArea, serviceOptions, cityOptions } from './Field';
 import { PrivacyCheck } from './PrivacyCheck';
 import { useLeadSubmit } from './useLeadSubmit';
+import { PhotoSlots, slotsFor, type Photo } from './PhotoSlots';
 
-const steps = ['Necesidad', 'Espacio', 'Contacto'] as const;
+const steps = ['Necesidad', 'Espacio', 'Fotos', 'Contacto'] as const;
+const last = steps.length - 1;
 const segments = [
   { value: 'hogar', label: 'Hogar', hint: 'Dormitorio, sala' },
   { value: 'empresa', label: 'Oficina / comercio', hint: 'Hasta 1,500 m³' },
@@ -13,12 +15,16 @@ const segments = [
 export type EquipmentOption = { slug: string; name: string; capacities: number[] };
 type Props = { service?: string; product?: string; productName?: string; projectRef?: string; equipment: EquipmentOption[] };
 
-/** /cotizar: 3-step form. All steps stay mounted so FormData includes every field. */
+/** /cotizar: 4-step form. All steps stay mounted so FormData includes every field. */
 export default function QuoteStepper({ service, product, projectRef, equipment }: Props) {
   const [step, setStep] = useState(0);
   const [svc, setSvc] = useState(product ? 'Instalación' : service ?? 'Instalación');
   const [model, setModel] = useState(product ?? '');
   const capacities = equipment.find((e) => e.slug === model)?.capacities ?? [];
+  const [photos, setPhotos] = useState<Record<string, Photo>>({});
+  const slots = slotsFor(svc);
+  const photoFiles = slots.flatMap((s) => (photos[s.id] ? [photos[s.id].file] : []));
+  const isMaintenance = svc.startsWith('Mantenimiento');
   const [dir, setDir] = useState<1 | -1>(1);
   const formRef = useRef<HTMLFormElement>(null);
   const { pending, errors, formError, submit } = useLeadSubmit();
@@ -42,8 +48,8 @@ export default function QuoteStepper({ service, product, projectRef, equipment }
   });
 
   return (
-    <form ref={formRef} noValidate={step < 2} onSubmit={(e) => { e.preventDefault(); step < 2 ? go(step + 1) : submit(e.currentTarget); }} className="flex flex-col gap-7">
-      <ol className="grid grid-cols-3 gap-2" aria-label="Progreso">
+    <form ref={formRef} noValidate={step < last} onSubmit={(e) => { e.preventDefault(); step < last ? go(step + 1) : submit(e.currentTarget, photoFiles); }} className="flex flex-col gap-7">
+      <ol className="grid grid-cols-4 gap-2" aria-label="Progreso">
         {steps.map((s, i) => (
           <li key={s} className="flex flex-col gap-2">
             <span className={`h-1 rounded-full transition-colors duration-300 ${i <= step ? 'bg-ink' : 'bg-line'}`} />
@@ -58,7 +64,7 @@ export default function QuoteStepper({ service, product, projectRef, equipment }
         <div className="grid gap-3 sm:grid-cols-3">
           {segments.map((s, i) => (
             <label key={s.value} className="cursor-pointer rounded-[18px] border border-line bg-surface p-4 transition-[border-color,box-shadow] has-[:checked]:border-ink has-[:checked]:ring-1 has-[:checked]:ring-ink">
-              <input type="radio" name="segment" value={s.value} defaultChecked={i === 1} className="sr-only" />
+              <input type="radio" name="segment" value={s.value} defaultChecked={i === 0} className="sr-only" />
               <span className="block text-label">{s.label}</span>
               <span className="text-sm text-muted">{s.hint}</span>
             </label>
@@ -94,6 +100,21 @@ export default function QuoteStepper({ service, product, projectRef, equipment }
       </div>
 
       <div {...panel(2)}>
+        <div className="flex flex-col gap-2">
+          <p className="text-h3">Envíanos unas fotos</p>
+          <p className="text-muted">
+            {isMaintenance
+              ? 'Con estas fotos diagnosticamos antes de ir y llegamos con los repuestos correctos.'
+              : 'Con estas fotos te cotizamos sin esperar la visita y te enviamos una simulación de cómo quedaría el equipo.'}
+          </p>
+        </div>
+        <PhotoSlots slots={slots} photos={photos} onChange={setPhotos} />
+        <p className="text-caption text-muted">
+          ¿No sabes cómo tomarlas? <a href="#guia-fotos" className="text-primary underline-offset-2 hover:underline">Mira la guía de fotos</a>. Si prefieres, puedes saltar este paso y coordinamos una visita técnica.
+        </p>
+      </div>
+
+      <div {...panel(3)}>
         <p className="text-h3">¿A dónde te enviamos la cotización?</p>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Nombre" name="name" required autoComplete="name" placeholder="Tu nombre" error={errors.name} />
@@ -107,7 +128,7 @@ export default function QuoteStepper({ service, product, projectRef, equipment }
         {step > 0 ? <button type="button" onClick={() => go(step - 1)} className="text-label text-muted hover:text-ink">← Atrás</button> : <span />}
         <button type="submit" disabled={pending} className="inline-flex h-12 items-center gap-2 rounded-full bg-ink px-6 text-[15px] font-medium text-white transition-transform duration-150 ease-out active:scale-[0.97] disabled:opacity-70">
           {pending && <span className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true" />}
-          {step < 2 ? 'Continuar' : pending ? 'Enviando…' : 'Solicitar cotización'}
+          {step === 2 && !photoFiles.length ? 'Continuar sin fotos' : step < last ? 'Continuar' : pending ? 'Enviando…' : 'Solicitar cotización'}
         </button>
       </div>
       {formError && <p role="alert" className="text-caption text-red-600">{formError}</p>}

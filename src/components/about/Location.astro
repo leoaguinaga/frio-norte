@@ -14,7 +14,7 @@ const rows = [['Dirección', site.address], ['Horario', site.hours], ['Teléfono
       <Button href={site.mapsUrl} size="lg" target="_blank" rel="noopener">Cómo llegar</Button>
     </div>
     <div class="skeleton min-h-[420px] overflow-hidden rounded-[28px]" data-reveal style="--i:1">
-      <iframe title="Mapa de Frío Norte en Chiclayo" src="https://www.google.com/maps?q=Prolongacion+Bolognesi+Chiclayo&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="size-full min-h-[420px] border-0"></iframe>
+      <iframe title="Mapa de Frío Norte en Chiclayo" src={site.mapsEmbedUrl} loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="size-full min-h-[420px] border-0"></iframe>
     </div>
   </div>
 </Section>

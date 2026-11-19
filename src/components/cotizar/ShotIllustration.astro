@@ -1,0 +1,50 @@
+---
+// Line drawings showing how to frame each photo. Corner brackets read as a camera viewfinder.
+import type { Shot } from '../../data/cotizar';
+const { id } = Astro.props as { id: Shot['id'] };
+---
+<svg viewBox="0 0 280 200" fill="none" class="h-auto w-full max-w-[260px]" aria-hidden="true">
+  {id === 'pared' && (
+    <g stroke-width="2">
+      <path d="M24 34H256M24 172H256" stroke="#9fb0c3" />
+      <rect x="44" y="72" width="62" height="68" rx="3" stroke="#5b6b80" />
+      <path d="M75 72V140M44 106H106" stroke="#5b6b80" stroke-width="1.5" />
+      <rect x="136" y="48" width="92" height="26" rx="6" fill="#e3eefb" stroke="#1f74d0" stroke-dasharray="5 4" />
+      <path d="M228 62H236V168" stroke="#1f74d0" stroke-width="1.5" stroke-dasharray="2 4" />
+      <rect x="186" y="140" width="14" height="18" rx="2" stroke="#5b6b80" stroke-width="1.5" />
+      <path d="M252 38V168M248 42L252 38L256 42M248 164L252 168L256 164" stroke="#1f74d0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+  )}
+  {id === 'ambiente' && (
+    <g stroke-width="2">
+      <rect x="84" y="54" width="112" height="84" stroke="#5b6b80" />
+      <path d="M28 24L84 54M252 24L196 54M28 176L84 138M252 176L196 138" stroke="#9fb0c3" />
+      <rect x="98" y="88" width="26" height="50" rx="1" stroke="#5b6b80" stroke-width="1.5" />
+      <rect x="146" y="70" width="36" height="26" rx="1" stroke="#5b6b80" stroke-width="1.5" />
+      <path d="M84 138L28 176H252L196 138Z" fill="#e3eefb" stroke="#1f74d0" stroke-width="1.5" stroke-dasharray="4 4" />
+    </g>
+  )}
+  {id === 'exterior' && (
+    <g stroke-width="2">
+      <circle cx="236" cy="42" r="12" stroke="#5b6b80" stroke-width="1.5" />
+      <path d="M24 124H256M24 152H256M44 124V176M84 124V176M124 124V176M164 124V176M204 124V176M244 124V176" stroke="#9fb0c3" />
+      <rect x="88" y="58" width="104" height="66" rx="6" fill="#e3eefb" stroke="#1f74d0" />
+      <circle cx="124" cy="91" r="22" stroke="#1f74d0" />
+      <path d="M124 69V113M102 91H146" stroke="#1f74d0" stroke-width="1.2" />
+      <path d="M160 74H180M160 84H180M160 94H180M160 104H180" stroke="#1f74d0" stroke-width="1.5" stroke-linecap="round" />
+    </g>
+  )}
+  {id === 'tablero' && (
+    <g stroke-width="2">
+      <path d="M88 26L52 42V158L88 174" stroke="#9fb0c3" stroke-linejoin="round" />
+      <rect x="88" y="26" width="112" height="148" rx="6" stroke="#5b6b80" />
+      <g stroke="#5b6b80" stroke-width="1.5">
+        {[102, 120, 138, 156, 174].map((x) => <rect x={x} y="48" width="12" height="30" rx="2" />)}
+        {[102, 120, 156, 174].map((x) => <rect x={x} y="102" width="12" height="30" rx="2" />)}
+      </g>
+      <rect x="138" y="102" width="12" height="30" rx="2" fill="#e3eefb" stroke="#1f74d0" />
+      <path d="M102 88H186M102 142H186" stroke="#9fb0c3" stroke-width="1.5" stroke-dasharray="3 3" />
+    </g>
+  )}
+  <path d="M12 32V12H32M248 12H268V32M268 168V188H248M32 188H12V168" stroke="#0b1b33" stroke-opacity=".3" stroke-width="2.5" stroke-linecap="round" />
+</svg>

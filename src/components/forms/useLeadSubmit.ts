@@ -7,8 +7,9 @@ export function useLeadSubmit() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string>();
 
-  async function submit(form: HTMLFormElement) {
+  async function submit(form: HTMLFormElement, photos: File[] = []) {
     const data = new FormData(form);
+    photos.forEach((f) => data.append('photos', f));
     data.set('page', location.pathname);
     data.set('utm', new URLSearchParams([...new URLSearchParams(location.search)].filter(([k]) => k.startsWith('utm_'))).toString());
     setPending(true);
@@ -29,7 +30,7 @@ export function useLeadSubmit() {
       return;
     }
     const name = String(data.get('name') ?? '').split(' ')[0];
-    location.href = `/gracias?id=${encodeURIComponent(res.id)}&n=${encodeURIComponent(name)}`;
+    location.href = `/gracias?id=${encodeURIComponent(res.id)}&n=${encodeURIComponent(name)}${photos.length ? `&f=${photos.length}` : ''}`;
   }
 
   return { pending, errors, formError, submit };

@@ -9,4 +9,6 @@ const io = new IntersectionObserver(
   },
   { rootMargin: '0px 0px -10% 0px', threshold: 0.1 },
 );
-document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+document.addEventListener('astro:page-load', () => {
+  document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach((el) => io.observe(el));
+});

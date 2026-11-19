@@ -8,9 +8,15 @@ import { stats } from '../../data/home';
     <Eyebrow>Sobre Frío Norte</Eyebrow>
     <p class="max-w-[1000px] text-h2 text-balance">De la asesoría al mantenimiento: sistemas de climatización diseñados, instalados y cuidados por técnicos certificados en todo el norte del Perú.</p>
   </div>
-  <dl class="grid w-full grid-cols-2 gap-4 lg:grid-cols-4">
+  <!-- One panel with hairline dividers: reads as a single proof point, not four competing cards. -->
+  <dl class="grid w-full grid-cols-2 overflow-hidden rounded-panel bg-surface lg:grid-cols-4" data-reveal>
     {stats.map((s, i) => (
-      <div class="flex flex-col gap-1.5 rounded-3xl bg-surface p-7 text-left" data-reveal style={`--i:${i}`}>
+      <div class:list={[
+        'flex flex-col gap-1.5 p-7 text-left lg:p-9',
+        i % 2 === 1 && 'border-l border-line',
+        i >= 2 && 'border-t border-line lg:border-t-0',
+        i === 2 && 'lg:border-l',
+      ]}>
         <dt class="order-2 text-muted">{s.label}</dt>
         <dd class="text-display-l">{s.value}</dd>
       </div>

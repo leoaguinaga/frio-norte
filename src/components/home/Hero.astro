@@ -2,53 +2,66 @@
 import Eyebrow from "../ui/Eyebrow.astro";
 import Button from "../ui/Button.astro";
 import Photo from "../ui/Photo.astro";
-import QuoteForm from "../forms/QuoteForm";
 import { images } from "../../lib/images";
 ---
 
-<section class="px-4 pt-2">
+<!--
+  "Refresh" hero: the room starts warm, the split switches on, air leaves its louvres
+  and the temperature settles from 32 °C to 18 °C. Motion lives in src/scripts/hero-breeze.ts.
+  data-vent-* = the louvre strip in hero-sala.jpg (fractions of the image), data-object-x = object-position.
+  Without JS the hero renders straight in its settled, fresh state.
+-->
+<section
+  class="hero px-4 pt-2"
+  data-hero-fx
+  data-vent-x0="0.6"
+  data-vent-x1="0.71"
+  data-vent-y="0.285"
+  data-object-x="0.7"
+>
   <Photo
     src={images.hero}
-    alt="Técnicos de Frío Norte instalando una unidad condensadora en una azotea de Chiclayo"
+    alt="Sala iluminada por el sol de la tarde con un aire acondicionado split en la pared"
     eager
     sizes="100vw"
     position="object-[70%_center]"
-    class="mx-auto max-w-[1408px] rounded-[var(--radius-panel)]"
+    class="isolate mx-auto max-w-[1408px] rounded-[var(--radius-panel)]"
   >
+    <div class="fx grade grade-warm" aria-hidden="true"></div>
+    <div class="fx grade grade-warm2" aria-hidden="true"></div>
+    <div class="fx grade grade-cool" aria-hidden="true"></div>
+    <div class="fx grade grade-cool2" aria-hidden="true"></div>
+    <div class="fx bloom" aria-hidden="true"></div>
     <div
-      class="absolute inset-0 bg-linear-to-b from-canvas/40 via-canvas/20 to-transparent lg:bg-linear-to-r lg:from-canvas/90 lg:from-20% lg:via-canvas/60 lg:via-35% lg:to-transparent lg:to-60%"
+      class="absolute inset-0 bg-linear-to-b from-canvas/40 via-canvas/20 to-transparent lg:bg-linear-to-r lg:from-canvas/90 lg:from-20% lg:via-canvas/40 lg:via-35% lg:to-transparent lg:to-60%"
       aria-hidden="true"
-    >
-    </div>
-    <div
-      class="relative grid gap-10 px-6 py-14 sm:px-12 lg:grid-cols-[1fr_360px] lg:items-end lg:px-16 lg:py-24"
-    >
+    ></div>
+    <canvas class="fx size-full" data-hero-breeze aria-hidden="true"></canvas>
+
+    <div class="relative grid gap-10 px-6 py-14 sm:px-12 lg:grid-cols-[1fr_auto] lg:items-end lg:px-16 lg:py-24">
       <div class="flex max-w-[620px] flex-col gap-7">
         <Eyebrow>Distribuidor autorizado LG en el norte</Eyebrow>
         <h1 class="text-display-xl text-balance">
-          Climatización confiable para todo el año
+          Climatización confiable para <span class="cool-word">todo el año</span>
         </h1>
-        <p
-          class="max-w-[440px] text-body-l text-ink text-pretty [text-shadow:0_0_12px_var(--color-canvas),0_0_2px_var(--color-canvas)]"
-        >
+        <p class="max-w-[440px] text-body-l text-ink text-pretty [text-shadow:0_0_12px_var(--color-canvas),0_0_2px_var(--color-canvas)]">
           Vendemos, instalamos y mantenemos equipos LG, Daikin y York para
           hogares, empresas e industria. Cotización en 24 horas.
         </p>
         <div class="flex flex-wrap gap-3">
-          <Button href="/cotizar" size="lg">Cotizar gratis</Button>
-          <Button href="/servicios" variant="secondary" size="lg"
-            >Ver servicios</Button
-          >
+          <Button href="/cotizar" size="lg">
+            Cotizar gratis
+          </Button>
+          <Button href="/servicios" variant="secondary" size="lg">
+            Ver servicios
+          </Button>
         </div>
         <div class="mt-6 flex flex-col gap-1.5">
           <div class="flex -space-x-2" aria-hidden="true">
-            {
-              [0, 1, 2].map(() => (
-                <span class="size-7 rounded-full border-2 border-surface bg-surface-muted" />
-              ))
-            }
-            <span class="size-7 rounded-full border-2 border-surface bg-primary"
-            ></span>
+            {[0, 1, 2].map(() => (
+              <span class="size-7 rounded-full border-2 border-surface bg-surface-muted" />
+            ))}
+            <span class="size-7 rounded-full border-2 border-surface bg-primary"></span>
           </div>
           <p class="text-label">500+ proyectos instalados</p>
           <p class="text-caption text-muted">
@@ -56,11 +69,102 @@ import { images } from "../../lib/images";
           </p>
         </div>
       </div>
-      <div
-        class="rounded-3xl bg-surface/85 p-6 shadow-[var(--shadow-float)] backdrop-blur-sm"
-      >
-        <QuoteForm client:idle />
+
+      <!-- Thermometer: decorative storytelling, so hidden from assistive tech. -->
+      <div class="temp self-start lg:self-end" aria-hidden="true">
+        <div class="temp-icon">
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+          <svg class="wind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 19.6A2 2 0 1 0 14 16H2" /><path d="M17.5 8a2.5 2.5 0 1 1 2 4H2" /><path d="M9.8 4.4A2 2 0 1 1 11 8H2" /></svg>
+        </div>
+        <p class="temp-num"><span class="num-live" data-hero-temp>32</span><span class="num-static">18</span>°C</p>
+        <div class="temp-labels">
+          <span class="before"><b>Afuera</b>Chiclayo, mediodía</span>
+          <span class="after"><b>Adentro</b>Con Frío Norte</span>
+        </div>
       </div>
     </div>
   </Photo>
 </section>
+
+<script>
+  import "../../scripts/hero-breeze";
+</script>
+
+<style>
+  /*
+    Default = settled, fresh state (no JS, reduced motion, repeat visits).
+    With JS, the hero starts warm until hero-breeze.ts adds .fresh, then .settled.
+    Only opacity / transform / color are transitioned.
+  */
+  .fx { position: absolute; inset: 0; pointer-events: none; }
+
+  .grade { transition: opacity 2000ms var(--ease-out-strong); }
+  .grade-warm { background: linear-gradient(120deg, #ffb066 0%, #ff9446 55%, #ffd49a 100%); mix-blend-mode: soft-light; opacity: 0; }
+  .grade-warm2 { background: radial-gradient(120% 90% at 80% 10%, rgb(255 196 130 / 0.3), transparent 60%); opacity: 0; }
+  /* fresh = cyan-mint, low saturation; not ice blue */
+  .grade-cool { background: linear-gradient(120deg, #bfe6f2 0%, #8fcfe6 55%, #d8f1ee 100%); mix-blend-mode: soft-light; opacity: 0.7; }
+  .grade-cool2 { background: linear-gradient(180deg, rgb(240 250 252 / 0.16), rgb(225 244 248 / 0.06)); opacity: 1; }
+  .bloom {
+    background: radial-gradient(60% 70% at 85% 30%, rgb(214 242 250 / 0.45), rgb(214 242 250 / 0) 70%);
+    transform-origin: 85% 30%;
+    transition: opacity 1800ms var(--ease-out-strong), transform 2400ms var(--ease-out-strong);
+  }
+  .cool-word { color: var(--color-primary); transition: color 1600ms var(--ease-out-strong); }
+
+  :global(.js) .hero:not(.fresh) .grade-warm { opacity: 0.35; } /* the photo is already golden */
+  :global(.js) .hero:not(.fresh) .grade-warm2 { opacity: 1; }
+  :global(.js) .hero:not(.fresh) .grade-cool,
+  :global(.js) .hero:not(.fresh) .grade-cool2 { opacity: 0; }
+  :global(.js) .hero:not(.fresh) .bloom { opacity: 0; transform: translateX(6%) scale(0.92); }
+  :global(.js) .hero:not(.fresh) .cool-word { color: var(--color-ink); }
+
+  /* ---- Thermometer chip */
+  .temp {
+    display: flex; align-items: center; gap: 14px; min-width: 268px;
+    padding: 14px 22px 14px 14px; border-radius: 22px;
+    background: rgb(255 255 255 / 0.72);
+    backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgb(255 255 255 / 0.6);
+    box-shadow: 0 12px 32px rgb(11 27 51 / 0.14);
+  }
+  .temp-icon {
+    position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px;
+    background: #e3f4f6; transition: background-color 900ms var(--ease-out-strong);
+  }
+  .temp-icon svg {
+    position: absolute; width: 24px; height: 24px;
+    transition: opacity 500ms ease, transform 700ms var(--ease-out-strong), filter 500ms ease;
+  }
+  .sun { color: #f08a24; opacity: 0; transform: scale(0.6); filter: blur(4px); }
+  .wind { color: #1f8fb0; }
+  .temp-num { font-size: 2.125rem; font-weight: 500; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .num-live { display: none; }
+  .temp-labels { position: relative; flex: 1; height: 34px; }
+  .temp-labels span {
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
+    font-size: 0.8125rem; line-height: 1.3; color: var(--color-muted);
+    transition: opacity 400ms ease, transform 600ms var(--ease-out-strong), filter 400ms ease;
+  }
+  .temp-labels b { font-size: 0.875rem; font-weight: 500; color: var(--color-ink); }
+  .before { opacity: 0; transform: translateY(-8px); filter: blur(3px); }
+
+  :global(.js) .num-live { display: inline; }
+  :global(.js) .num-static { display: none; }
+  :global(.js) .hero:not(.settled) .temp-icon { background: #fff1e4; }
+  :global(.js) .hero:not(.settled) .sun { opacity: 1; transform: none; filter: none; }
+  :global(.js) .hero:not(.settled) .wind { opacity: 0; transform: translateX(-8px); filter: blur(4px); }
+  :global(.js) .hero:not(.settled) .before { opacity: 1; transform: none; filter: none; }
+  :global(.js) .hero:not(.settled) .after { opacity: 0; transform: translateY(8px); filter: blur(3px); }
+
+  @media (max-width: 1023px) {
+    .temp { min-width: 0; width: 100%; max-width: 360px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grade, .bloom, .cool-word, .temp-icon, .temp-icon svg, .temp-labels span { transition-duration: 300ms; }
+    .bloom, .temp-icon svg, .temp-labels span { transform: none !important; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .temp { background: var(--color-surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  }
+</style>

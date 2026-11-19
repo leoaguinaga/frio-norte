@@ -5,6 +5,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Eyebrow from '../components/ui/Eyebrow.astro';
 import Photo from '../components/ui/Photo.astro';
 import QuoteStepper from '../components/forms/QuoteStepper';
+import PhotoGuide from '../components/cotizar/PhotoGuide.astro';
+import PhotoProcess from '../components/cotizar/PhotoProcess.astro';
+import HomeCases from '../components/cotizar/HomeCases.astro';
 import { getProduct, products } from '../data/products';
 import { productImage } from '../lib/images';
 
@@ -12,15 +15,22 @@ const q = Astro.url.searchParams;
 const product = q.get('producto') ? getProduct(q.get('producto')!) : undefined;
 const service = q.get('servicio') ?? undefined;
 const projectRef = q.get('proyecto') ?? undefined;
-const perks = ['Respuesta en 24 h', 'Visita técnica sin costo en Chiclayo', 'Precios de distribuidor directo'];
+const jumps = [['#guia-fotos', 'Qué fotos necesitamos'], ['#que-hacemos', 'Qué hacemos con ellas'], ['#casos', 'Hogares como el tuyo']];
+const perks = ['Respuesta en 24 h', 'Cotiza con fotos, sin esperar la visita', 'Visita técnica sin costo en Chiclayo', 'Precios de distribuidor directo'];
 ---
-<BaseLayout title="Cotizar gratis" description="Cuéntanos qué necesitas y recibe tu cotización de aire acondicionado en menos de 24 horas.">
-  <section class="mx-auto grid max-w-[1440px] gap-10 px-4 pb-24 pt-12 sm:px-8 lg:grid-cols-[420px_1fr] lg:gap-16 lg:px-[120px]">
+<BaseLayout title="Cotizar gratis" description="Cotiza el aire acondicionado de tu casa o departamento con unas fotos desde tu celular. Cotización y simulación en menos de 24 horas.">
+  <section class="mx-auto grid max-w-[1440px] gap-10 px-4 pb-24 pt-12 sm:px-8 xl:grid-cols-[420px_1fr] xl:gap-16 lg:px-[120px]">
     <div class="flex flex-col gap-6">
       <Eyebrow>Cotización gratis</Eyebrow>
       <h1 class="text-display-l">Cuéntanos qué necesitas</h1>
-      <p class="text-body-l text-muted">Te enviamos una cotización detallada en menos de 24 horas. Sin compromiso.</p>
+      <p class="text-body-l text-muted">Para tu casa o departamento. Te enviamos una cotización detallada en menos de 24 horas, sin compromiso.</p>
       <ul class="flex flex-col gap-2 text-label">{perks.map((p) => <li>✓ {p}</li>)}</ul>
+      <nav aria-label="En esta página" class="flex flex-col gap-3 border-t border-line pt-5">
+        <p class="text-sm text-muted">¿Primera vez cotizando con fotos?</p>
+        <ul class="flex flex-wrap gap-x-5 gap-y-2 text-label text-primary">
+          {jumps.map(([href, label]) => <li><a href={href} class="underline-offset-2 hover:underline">{label} ↓</a></li>)}
+        </ul>
+      </nav>
       {(product || projectRef) && (
         <div class="flex items-center gap-3 rounded-[18px] bg-surface p-3 pr-4">
           <Photo src={product ? productImage(product.slug) : undefined} alt="" fit="contain" sizes="56px" class="size-14 shrink-0 rounded-xl !bg-canvas" />
@@ -32,4 +42,7 @@ const perks = ['Respuesta en 24 h', 'Visita técnica sin costo en Chiclayo', 'Pr
       <QuoteStepper client:load service={service} product={product?.slug} projectRef={projectRef} equipment={products.map(({ slug, name, capacities }) => ({ slug, name, capacities }))} />
     </div>
   </section>
+  <PhotoGuide />
+  <PhotoProcess />
+  <HomeCases />
 </BaseLayout>

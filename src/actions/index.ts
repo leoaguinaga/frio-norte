@@ -4,6 +4,12 @@ import { createLead } from '../lib/contralio';
 
 const phone = z.string({ message: 'Ingresa tu teléfono' }).trim().regex(/^[+\d\s-]{7,15}$/, 'Ingresa un teléfono válido');
 // Fields a given form doesn't render arrive as null; normalise them to undefined.
+const MAX_PHOTOS = 6;
+const MAX_PHOTO_BYTES = 1.5 * 1024 * 1024; // client compresses to ~300 KB; this only stops abuse
+const photo = z
+  .instanceof(File)
+  .refine((f) => f.type.startsWith('image/'), 'Solo se aceptan imágenes')
+  .refine((f) => f.size <= MAX_PHOTO_BYTES, 'Una de las fotos es demasiado pesada');
 const opt = z.string().trim().nullish().transform((v) => v || undefined);
 
 export const server = {
@@ -21,15 +27,16 @@ export const server = {
       city: opt,
       volume: opt.pipe(z.coerce.number().positive('Ingresa un volumen válido').optional()),
       message: opt.pipe(z.string().max(1000).optional()),
+      photos: z.array(photo).max(MAX_PHOTOS, `Máximo ${MAX_PHOTOS} fotos`).optional(),
       page: opt.transform((v) => v ?? '/'),
       utm: opt,
       company: opt.pipe(z.undefined({ message: 'spam' })), // honeypot: real users never fill it
       privacy: z.literal('on', { message: 'Debes aceptar la política de privacidad' }).nullish().refine((v) => v === 'on', 'Debes aceptar la política de privacidad'),
     }),
-    handler: async ({ page, utm, company: _hp, privacy: _p, ...data }) => {
+    handler: async ({ page, utm, company: _hp, privacy: _p, photos, ...data }) => {
       try {
         const utmParams = utm ? Object.fromEntries(new URLSearchParams(utm)) : undefined;
-        return await createLead({ ...data, source: { page, utm: utmParams } });
+        return await createLead({ ...data, source: { page, utm: utmParams } }, photos ?? []);
       } catch (err) {
         console.error(err);
         throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'No pudimos enviar tu solicitud. Escríbenos por WhatsApp.' });

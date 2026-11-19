@@ -1,0 +1,56 @@
+---
+import Section from '../ui/Section.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import Button from '../ui/Button.astro';
+import Photo from '../ui/Photo.astro';
+import { images } from '../../lib/images';
+import { homeCases } from '../../data/cotizar';
+
+// Placeholder cases are visible in dev only, so they never ship as real testimonials.
+const cases = homeCases.filter((c) => c.verified || import.meta.env.DEV);
+const photo = (key?: 'hero') => (key ? images[key] : undefined);
+---
+<Section id="casos" class="scroll-mt-8 !pt-0">
+  {cases.length > 0 && (
+    <>
+      <SectionHeader
+        eyebrow="Casos de éxito"
+        title="Hogares que cotizaron con fotos"
+        subtitle="Casas y departamentos en Chiclayo y alrededores. Nos mandaron sus fotos, recibieron su cotización y solo fuimos para instalar."
+      />
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {cases.map((c, i) => (
+          <article class="flex flex-col gap-5 rounded-[28px] bg-surface p-2 pb-6" data-reveal style={`--i:${i}`}>
+            <div class="grid h-[232px] grid-cols-[1fr_2fr] gap-1.5">
+              <Photo src={photo(c.before)} alt={`Foto que envió el cliente: ${c.title}`} sizes="140px" class="rounded-[20px]">
+                <span class="absolute left-2.5 top-2.5 rounded-full bg-surface px-2.5 py-1 text-[11px] font-semibold">Su foto</span>
+              </Photo>
+              <Photo src={photo(c.after)} alt={`Resultado: ${c.title}`} sizes="(min-width:1024px) 260px, 66vw" class="rounded-[20px]">
+                <span class="absolute left-2.5 top-2.5 rounded-full bg-surface px-2.5 py-1 text-[11px] font-semibold">Así quedó</span>
+              </Photo>
+            </div>
+            <div class="flex flex-1 flex-col gap-3 px-4">
+              <p class="text-caption text-primary">{c.tag}</p>
+              <h3 class="text-h4">{c.title}</h3>
+              <dl class="grid grid-cols-3 gap-1.5">
+                {[['Fotos', c.photos], ['Cotización', c.quotedIn], ['Instalación', c.installedIn]].map(([k, v]) => (
+                  <div class="flex flex-col gap-0.5 rounded-xl bg-canvas p-2.5">
+                    <dt class="text-[11px] text-muted">{k}</dt>
+                    <dd class="text-label">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <blockquote class="text-[15px] text-muted">“{c.quote}”</blockquote>
+              <p class="mt-auto text-[13px] font-medium">{c.author}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </>
+  )}
+
+  <div class:list={['flex flex-col gap-4 rounded-[28px] border border-line p-5 sm:flex-row sm:items-center sm:justify-between sm:rounded-full sm:py-3 sm:pl-7 sm:pr-3', cases.length > 0 && 'mt-8']} data-reveal>
+    <p class="text-[15px]"><span class="font-medium">¿Es para tu negocio u oficina?</span> <span class="text-muted">También hacemos proyectos comerciales con visita técnica.</span></p>
+    <Button href="/proyectos" variant="secondary">Ver proyectos comerciales</Button>
+  </div>
+</Section>

@@ -10,6 +10,8 @@ export default defineConfig({
   // imageService: optimise images through Vercel, including on on-demand pages like /cotizar.
   adapter: vercel({ imageService: true }),
   image: { layout: 'constrained' },
+  // Quote photos (up to 6 × ~300 KB after client compression). Vercel caps function bodies at 4.5 MB.
+  security: { actionBodySizeLimit: 4 * 1024 * 1024 },
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   vite: { plugins: [tailwindcss()] },
   integrations: [react()],

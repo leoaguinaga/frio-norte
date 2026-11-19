@@ -27,10 +27,9 @@ const path = Astro.url.pathname;
 
 <script>
   // Give the bar a translucent material once content scrolls under it.
-  const bar = document.querySelector<HTMLElement>('[data-header]')!;
-  const sync = () => bar.toggleAttribute('data-scrolled', scrollY > 8);
+  const sync = () => document.querySelector<HTMLElement>('[data-header]')?.toggleAttribute('data-scrolled', scrollY > 8);
   addEventListener('scroll', sync, { passive: true });
-  sync();
+  document.addEventListener('astro:page-load', sync);
 </script>
 
 <style>

@@ -7,7 +7,7 @@ import Price from '../ui/Price.astro';
 import { formatBtu, typeLabel, type Product } from '../../data/products';
 const { product: p } = Astro.props as { product: Product };
 const f = p.featured!;
-const specs = [[`${formatBtu(p.capacities[0])}–${formatBtu(p.capacities.at(-1)!)}`, 'BTU/h'], [String(f.seer), 'SEER'], [String(f.db), 'dB mín.'], [f.area, 'm²']];
+const specs = [[`${formatBtu(p.capacities[0])}–${formatBtu(p.capacities.at(-1)!)}`, 'BTU/h'], [String(f.seer), 'SEER'], [String(f.db), 'dB mín.'], [f.area, 'm³']];
 ---
 <article class="grid items-center gap-8 rounded-[28px] bg-surface p-3 lg:grid-cols-[300px_1fr_260px] lg:gap-10 lg:pr-10" data-reveal>
   <Photo src={productImage(p.slug)} alt={p.name} fit="contain" sizes="(min-width:1024px) 300px, 100vw" class="aspect-[5/4] rounded-[20px] !bg-canvas" />

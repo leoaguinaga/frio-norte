@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Propuesta Frío Norte</title>
+<meta name="description" content="Propuesta de FoxCode para Frío Norte: sitio web corporativo y ecommerce conectados con Contralio.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0b1b33; --ink-2:#13284a; --muted:#5b6b80; --line:#dae3ed;
+  --canvas:#f2f6fa; --surface:#fff; --primary:#1f74d0; --primary-soft:#e3eefb;
+  --secondary:#3d9a7a; --secondary-soft:#e2f2ec;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--canvas);color:var(--ink);
+  font-family:"Geist",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+body{touch-action:pan-x pan-y}
+.mono{font-family:"Geist Mono",ui-monospace,monospace}
+
+/* ---------- deck ---------- */
+.deck{position:fixed;inset:0}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(88px,11vh,120px) clamp(20px,7vw,120px) clamp(96px,12vh,128px);
+  visibility:hidden;overflow:hidden}
+.slide.dark{background:var(--ink);color:#fff}
+.slide.dark .eyebrow{color:#7fb3ec}
+.slide.dark .lead{color:#a9b8cc}
+.inner{width:100%;max-width:1180px;margin:0 auto}
+
+.eyebrow{font-family:"Geist Mono",monospace;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--primary);margin-bottom:1.25rem;display:flex;align-items:center;gap:.6rem}
+.eyebrow::before{content:"";width:18px;height:1px;background:currentColor}
+h1,h2{font-weight:500;letter-spacing:-.04em;line-height:1.02}
+h1{font-size:clamp(2.6rem,6.4vw,5.6rem)}
+h2{font-size:clamp(2rem,4.4vw,3.6rem);max-width:18ch}
+h3{font-size:1.15rem;font-weight:600;letter-spacing:-.015em;line-height:1.25}
+.lead{font-size:clamp(1.05rem,1.5vw,1.3rem);line-height:1.5;color:var(--muted);max-width:52ch;margin-top:1.25rem}
+.accent{color:var(--primary)} .dark .accent{color:#6fb0f2}
+.green{color:var(--secondary)}
+
+/* ---------- chrome ---------- */
+.top{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  padding:18px clamp(20px,4vw,48px);pointer-events:none;transition:color .4s}
+.top img{height:26px;display:block;transition:filter .4s}
+.top .chap{font-family:"Geist Mono",monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;opacity:.6}
+body.on-dark .top{color:#fff} body.on-dark .top img{filter:brightness(0) invert(1)}
+.progress{position:fixed;top:0;left:0;height:2px;background:var(--primary);z-index:30;width:0;transition:width .6s var(--ease)}
+.controls{position:fixed;right:clamp(16px,4vw,48px);bottom:clamp(16px,4vh,36px);z-index:20;display:flex;align-items:center;gap:10px}
+.count{font-family:"Geist Mono",monospace;font-size:.78rem;opacity:.6;margin-right:6px;min-width:52px;text-align:right}
+body.on-dark .controls{color:#fff}
+.btn{appearance:none;border:0;cursor:pointer;height:48px;min-width:48px;border-radius:999px;display:grid;place-items:center;
+  font:500 .95rem "Geist",sans-serif;color:var(--ink);
+  background:rgba(255,255,255,.7);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 6px 20px rgba(11,27,51,.10);
+  transition:transform .12s ease-out,background .3s,opacity .3s}
+.btn:active{transform:scale(.94)}
+.btn.next{background:var(--primary);color:#fff;padding:0 22px;gap:8px;display:flex}
+.btn[disabled]{opacity:.3;pointer-events:none}
+body.on-dark .btn.prev{background:rgba(255,255,255,.12);color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.15) inset}
+.btn svg{width:18px;height:18px}
+.hint{position:fixed;left:clamp(20px,4vw,48px);bottom:clamp(22px,4.5vh,44px);z-index:20;font-family:"Geist Mono",monospace;
+  font-size:.72rem;letter-spacing:.08em;opacity:.45;transition:opacity .6s}
+body.on-dark .hint{color:#fff}
+.dots{position:fixed;left:clamp(14px,2vw,28px);top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:10px}
+.dots button{width:6px;height:6px;border-radius:9px;border:0;background:currentColor;opacity:.22;cursor:pointer;transition:all .4s var(--ease)}
+.dots button.on{opacity:1;height:22px;background:var(--primary)}
+body.on-dark .dots{color:#fff}
+
+/* ---------- cover ---------- */
+.cover .inner{display:grid;gap:2.5rem}
+.cover h1{max-width:14ch}
+.meta{display:flex;flex-wrap:wrap;gap:2.5rem;margin-top:1rem;font-size:.9rem;color:#a9b8cc}
+.meta b{display:block;color:#fff;font-weight:500;margin-top:.2rem}
+.orb{position:absolute;right:-12vw;top:50%;width:min(62vw,820px);aspect-ratio:1;transform:translateY(-50%);border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,rgba(31,116,208,.55),rgba(31,116,208,0) 60%),
+             radial-gradient(circle at 65% 70%,rgba(61,154,122,.35),rgba(61,154,122,0) 55%);filter:blur(10px);pointer-events:none}
+.flake{position:absolute;right:12vw;top:50%;transform:translateY(-50%);width:min(24vw,260px);opacity:.9;color:#cfe2f7;pointer-events:none}
+
+/* ---------- grids / cards ---------- */
+.grid{display:grid;gap:14px;margin-top:2.5rem}
+.g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 22px 24px}
+.card p{color:var(--muted);font-size:.95rem;line-height:1.45;margin-top:.45rem}
+.card .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);margin-bottom:16px}
+.card .ic svg{width:20px;height:20px}
+.card.bad .ic{background:#fde8e8;color:#c94141}
+.num{font-family:"Geist Mono",monospace;font-size:.75rem;color:var(--muted);letter-spacing:.08em}
+.dark .card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)}
+.dark .card p{color:#a9b8cc}
+.dark .card .ic{background:rgba(111,176,242,.14);color:#8cc0f5}
+
+/* ---------- roadmap ---------- */
+.road{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:2.75rem;position:relative}
+.phase{border-radius:24px;padding:30px;min-height:290px;display:flex;flex-direction:column}
+.phase.p1{background:var(--surface);border:1px solid var(--line)}
+.phase.p2{background:var(--ink);color:#fff}
+.phase .tag{font-family:"Geist Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.6}
+.phase h3{font-size:clamp(1.5rem,2.4vw,2rem);font-weight:500;letter-spacing:-.03em;margin:.6rem 0 .9rem}
+.phase ul{list-style:none;display:grid;gap:.55rem;margin-top:auto}
+.phase li{display:flex;gap:.6rem;font-size:.98rem;line-height:1.35}
+.phase li::before{content:"";flex:none;width:6px;height:6px;border-radius:9px;background:var(--primary);margin-top:.5em}
+.phase.p2 li::before{background:#6fd0a8}
+.phase .time{margin-top:1.4rem;padding-top:1rem;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+.phase.p2 .time{border-color:rgba(255,255,255,.12);color:#a9b8cc}
+.plus{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;
+  background:var(--primary);color:#fff;display:grid;place-items:center;font-size:1.4rem;z-index:2;box-shadow:0 0 0 6px var(--canvas)}
+
+/* ---------- flow ---------- */
+.flow{position:relative;display:grid;gap:12px;margin-top:3rem}
+.flow .rail{position:absolute;left:28px;right:28px;top:28px;height:2px;background:var(--line);z-index:0}
+.flow .rail i{position:absolute;inset:0;background:var(--primary);transform-origin:left;transform:scaleX(0)}
+.dark .flow .rail{background:rgba(255,255,255,.12)}
+.node{position:relative;z-index:1}
+.node h3,.node p{opacity:.3;transition:opacity .5s var(--ease)}
+.node.on h3,.node.on p{opacity:1}
+.node:not(.on) .dot{color:#b9c6d4}
+.dark .node:not(.on) .dot{color:#4d6280}
+.node .dot{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:var(--surface);
+  border:1px solid var(--line);color:var(--muted);transition:all .5s var(--ease)}
+.node.on .dot{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 10px 30px rgba(31,116,208,.3)}
+.node.cur .dot{transform:scale(1.08)}
+.node.contralio.on .dot{background:var(--secondary);border-color:var(--secondary);box-shadow:0 10px 30px rgba(61,154,122,.3)}
+.dark .node .dot{background:var(--ink-2);border-color:rgba(255,255,255,.12);color:#8aa0bd}
+.node .dot svg{width:24px;height:24px}
+.node h3{margin-top:16px;font-size:1rem}
+.node p{color:var(--muted);font-size:.88rem;line-height:1.4;margin-top:.3rem;max-width:22ch}
+.dark .node p{color:#a9b8cc}
+.caption{margin-top:2.5rem;min-height:3.2em;font-size:clamp(1.05rem,1.6vw,1.35rem);line-height:1.45;max-width:60ch;color:var(--ink)}
+.dark .caption{color:#dfe8f3}
+.caption b{font-weight:600}
+.loop{margin-top:1.5rem;display:inline-flex;align-items:center;gap:.6rem;padding:.6rem 1rem;border-radius:999px;
+  background:var(--secondary-soft);color:#24684f;font-size:.9rem}
+.dark .loop{background:rgba(61,154,122,.16);color:#8fe0bf}
+.loop svg{width:16px;height:16px}
+
+/* ---------- catalog ---------- */
+.types{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:2.5rem}
+.type{border-radius:20px;background:var(--surface);border:1px solid var(--line);padding:22px;min-height:190px;display:flex;flex-direction:column}
+.type .vis{height:62px;display:flex;align-items:center;color:var(--primary)}
+.type .vis svg{height:100%;width:auto}
+.type h3{margin-top:auto}
+.type p{color:var(--muted);font-size:.88rem;margin-top:.3rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.6rem}
+.chip{padding:.5rem .9rem;border-radius:999px;background:var(--primary-soft);color:#1a5da8;font-size:.88rem}
+
+/* ---------- architecture ---------- */
+.arch{display:grid;grid-template-columns:1fr 56px 1.25fr 56px 1fr;align-items:stretch;margin-top:2.75rem}
+.box{border-radius:22px;padding:24px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.box .tag{font-family:"Geist Mono",monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#8aa0bd}
+.box h3{font-size:1.35rem;font-weight:500;letter-spacing:-.02em;margin:.4rem 0 1rem}
+.box ul{list-style:none;display:grid;gap:.5rem}
+.box li{font-size:.92rem;color:#c6d3e3;display:flex;gap:.55rem;align-items:center}
+.box li::before{content:"";width:5px;height:5px;border-radius:9px;background:#6fb0f2;flex:none}
+.box.panel{background:var(--primary);border-color:var(--primary);box-shadow:0 30px 60px rgba(31,116,208,.35)}
+.box.panel .tag{color:#cfe2f7} .box.panel li{color:#fff} .box.panel li::before{background:#fff}
+.box.ctl{border-color:rgba(61,154,122,.5);background:rgba(61,154,122,.1)}
+.box.ctl li::before{background:#6fd0a8}
+.box li.no{color:#7d8da3;text-decoration:line-through;text-decoration-color:rgba(255,255,255,.3)}
+.box li.no::before{background:#7d8da3}
+.link{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#6fb0f2}
+.link svg{width:28px;height:28px}
+.link span{font-family:"Geist Mono",monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:#8aa0bd;text-align:center}
+.note{margin-top:1.8rem;font-size:.95rem;color:#a9b8cc;max-width:70ch}
+.note b{color:#fff;font-weight:500}
+
+
+/* ---------- prototype ---------- */
+.proto{display:grid;grid-template-columns:300px 1fr;gap:40px;margin-top:2rem;align-items:start}
+.psteps ol{list-style:none;display:grid;gap:4px;counter-reset:p}
+.psteps li{counter-increment:p;display:grid;grid-template-columns:30px 1fr;column-gap:12px;padding:9px 10px;border-radius:14px;cursor:pointer;opacity:.4;transition:opacity .4s,background .4s}
+.psteps li::before{content:counter(p);grid-row:span 2;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);font:500 .78rem "Geist Mono",monospace;color:var(--muted);transition:all .4s var(--ease)}
+.psteps li b{font-size:.98rem;font-weight:600} .psteps li span{font-size:.82rem;color:var(--muted)}
+.psteps li.done{opacity:.75} .psteps li.done::before,.psteps li.cur::before{background:var(--primary);border-color:var(--primary);color:#fff}
+.psteps li.ctl.done::before,.psteps li.ctl.cur::before{background:var(--secondary);border-color:var(--secondary)}
+.psteps li.cur{opacity:1;background:var(--surface);box-shadow:0 6px 20px rgba(11,27,51,.06)}
+.psteps li:active{transform:scale(.98)}
+.pcap{margin-top:1.4rem;font-size:1rem;min-height:4.4em}
+.device{border-radius:20px;background:var(--surface);border:1px solid var(--line);box-shadow:0 40px 80px -30px rgba(11,27,51,.28);overflow:hidden}
+.bar{display:flex;align-items:center;gap:6px;padding:12px 14px;border-bottom:1px solid var(--line);background:#f8fafc}
+.bar i{width:10px;height:10px;border-radius:50%;background:#dfe5ec}
+.bar span{flex:1;margin:0 10px;padding:5px 12px;border-radius:8px;background:#eef2f6;font:.74rem "Geist Mono",monospace;color:var(--muted);transition:color .3s}
+.badge{font-style:normal;min-width:24px;height:24px;border-radius:12px;background:var(--primary);color:#fff;font-size:.75rem;font-weight:600;display:grid;place-items:center;padding:0 6px}
+.screen{position:relative;height:min(430px,52vh);min-height:360px}
+.view{position:absolute;inset:0;padding:20px 22px;overflow:auto;visibility:hidden;opacity:0}
+.vhead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.vhead b{font-size:1.05rem;font-weight:600;letter-spacing:-.01em}
+.fchips{display:flex;gap:6px}.fchips span{font-size:.72rem;padding:4px 10px;border-radius:99px;background:#eef2f6;color:var(--muted)}.fchips .on{background:var(--ink);color:#fff}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.prod{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:4px;transition:border-color .3s,box-shadow .3s}
+.prod .ph{height:70px;border-radius:10px;background:linear-gradient(180deg,#eef4fb,#e3eefb);display:grid;place-items:center;color:var(--primary);margin-bottom:6px}
+.prod .ph svg{width:70%;height:auto}
+.prod b{font-size:.84rem;line-height:1.2} .prod small{font-size:.72rem;color:var(--muted)}
+.prod .pr{font-weight:600;font-size:.92rem;margin-top:2px}
+.prod button{margin-top:auto;border:0;border-radius:9px;padding:8px;font:500 .78rem "Geist",sans-serif;background:var(--primary-soft);color:#1a5da8;cursor:pointer;transition:transform .1s,background .25s,color .25s}
+.prod button:active{transform:scale(.95)}
+.prod.in{border-color:var(--primary);box-shadow:0 0 0 3px rgba(31,116,208,.12)} .prod.in button{background:var(--primary);color:#fff}
+.line{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.line .ph{width:52px;height:44px;border-radius:10px;background:#eef4fb;display:grid;place-items:center;color:var(--primary)} .line .ph svg{width:80%}
+.line b{font-size:.9rem;display:block} .line small{color:var(--muted);font-size:.76rem}
+.line .pr{font-weight:600;font-size:.92rem}
+.tog{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:.78rem;color:var(--ink);cursor:pointer;user-select:none}
+.tog i{width:30px;height:18px;border-radius:9px;background:#d5dde6;position:relative;transition:background .25s}
+.tog i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .3s var(--ease);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.tog.on i{background:var(--secondary)} .tog.on i::after{transform:translateX(12px)}
+.tot{display:flex;justify-content:space-between;align-items:baseline;padding-top:14px}
+.tot b{font-size:1.5rem;font-weight:600;letter-spacing:-.02em}
+.lock{font-size:.75rem;color:var(--secondary)}
+.methods{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.methods button{text-align:left;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;cursor:pointer;font-family:inherit;color:var(--ink);transition:all .25s}
+.methods button b{display:block;font-size:.88rem}.methods button span{font-size:.74rem;color:var(--muted)}
+.methods button.on{border-color:var(--primary);box-shadow:0 0 0 3px rgba(31,116,208,.12)}
+.paybox{position:relative;margin-top:14px;display:grid;gap:8px}
+.fld{display:flex;justify-content:space-between;padding:11px 14px;border-radius:10px;background:#f4f7fa;font-size:.85rem}.fld span{color:var(--muted)}.fld b{font-weight:500}
+.paybtn{margin-top:6px;border:0;border-radius:12px;height:46px;background:var(--primary);color:#fff;font:600 .95rem "Geist",sans-serif;cursor:pointer;transition:transform .1s}
+.paybtn:active{transform:scale(.98)}
+.paybtn.load span{display:inline-block;width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .7s linear infinite;font-size:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ok{position:absolute;inset:-6px;border-radius:14px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;opacity:0;visibility:hidden}
+.ok svg{width:54px;height:54px;padding:12px;border-radius:50%;background:var(--secondary);color:#fff}
+.ok b{font-size:1.1rem}.ok span{font-size:.82rem;color:var(--muted)}
+.admin{display:grid;grid-template-columns:120px 1fr;padding:0;background:#f6f8fb}
+.admin aside{background:var(--ink);color:#8aa0bd;display:flex;flex-direction:column;gap:4px;padding:18px 12px;font-size:.8rem}
+.admin aside b{color:#fff;margin-bottom:10px}.admin aside span{padding:6px 8px;border-radius:8px}.admin aside .on{background:rgba(255,255,255,.1);color:#fff}
+.amain{padding:16px;overflow:auto;display:grid;gap:10px;align-content:start}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpis div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}
+.kpis span{font-size:.7rem;color:var(--muted);display:block}.kpis b{font-size:1.05rem;font-weight:600}
+.tbl{background:#fff;border:1px solid var(--line);border-radius:10px;font-size:.78rem;overflow:hidden}
+.th,.tr{display:grid;grid-template-columns:1fr 1.3fr .9fr .9fr;gap:8px;padding:8px 12px;align-items:center}
+.th{color:var(--muted);font-size:.7rem;border-bottom:1px solid var(--line)}
+.tr+.tr{border-top:1px solid #eef2f6}
+.tr.hl{background:var(--primary-soft)}
+.pill{font-size:.68rem;padding:2px 8px;border-radius:99px;background:var(--secondary-soft);color:#24684f;justify-self:start}
+.pill.w{background:#fff4dc;color:#946200}
+.stk{font-weight:600}.stk.dn{color:var(--primary)}
+.crm{background:linear-gradient(180deg,#f3faf7,#fff)}
+.cli{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.av{width:42px;height:42px;border-radius:50%;background:var(--secondary);color:#fff;display:grid;place-items:center;font-weight:600}
+.cli b{display:block}.cli span{font-size:.8rem;color:var(--muted)}
+.cli em{margin-left:auto;font-style:normal;font-size:.72rem;padding:4px 10px;border-radius:99px;background:var(--secondary-soft);color:#24684f}
+.tl2,.track{display:grid;gap:0;margin-top:12px}
+.tl2>div,.track>div{position:relative;padding:10px 0 10px 28px}
+.tl2>div::before,.track>div::before{content:"";position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--line)}
+.tl2 i,.track i{position:absolute;left:0;top:14px;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #b8c6d6}
+.tl2 b,.track b{display:block;font-size:.9rem}.tl2 span,.track span{font-size:.78rem;color:var(--muted)}
+.tl2 .new i{border-color:var(--secondary);background:var(--secondary)}
+.tl2 .new{background:var(--secondary-soft);border-radius:12px;padding-left:34px;margin-left:-6px}
+.tl2 .new i{left:6px}.tl2 .new::before{left:12px}
+.crmnote{margin-top:12px;font-size:.76rem;color:var(--muted)}
+.track .on i{border-color:var(--primary);background:var(--primary)}
+.toast{position:absolute;right:16px;bottom:16px;max-width:280px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 12px 30px rgba(11,27,51,.16);border-left:3px solid #25d366;opacity:0}
+.toast b{font-size:.74rem;display:block;color:#128c4a}.toast span{font-size:.8rem}
+@media (max-width:900px){.proto{grid-template-columns:1fr;gap:20px}.device{order:-1}.psteps ol{grid-template-columns:repeat(3,1fr)}.psteps li span{display:none}.pgrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.psteps ol{grid-template-columns:repeat(2,1fr)}.admin{grid-template-columns:1fr}.admin aside{display:none}.screen{height:440px}}
+
+/* ---------- price ---------- */
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:2.5rem}
+.price{border-radius:24px;padding:30px;background:var(--surface);border:1px solid var(--line)}
+.price.p2{background:var(--ink);color:#fff;border-color:var(--ink)}
+.price .tag{font-family:"Geist Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.price.p2 .tag{color:#8aa0bd}
+.price .amt{font-size:clamp(2.6rem,5vw,4.2rem);font-weight:500;letter-spacing:-.045em;line-height:1;margin:1rem 0 .5rem}
+.price .amt small{font-size:.4em;letter-spacing:-.01em;opacity:.55;margin-right:.2em}
+.price .igv{font-size:.92rem;color:var(--primary);font-weight:500}
+.price.p2 .igv{color:#6fb0f2}
+.price ul{list-style:none;display:grid;gap:.5rem;margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--line)}
+.price.p2 ul{border-color:rgba(255,255,255,.12)}
+.price li{font-size:.94rem;display:flex;gap:.6rem;color:var(--muted)} .price.p2 li{color:#c6d3e3}
+.price li svg{width:16px;height:16px;flex:none;margin-top:.15em;color:var(--secondary)}
+.fine{margin-top:1.4rem;font-size:.88rem;color:var(--muted)}
+
+
+.offer{margin-top:14px;border-radius:24px;padding:22px 30px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  background:linear-gradient(120deg,var(--primary),#2a8bd8 60%,var(--secondary));color:#fff;box-shadow:0 24px 50px -20px rgba(31,116,208,.55)}
+.offer .tag{font-family:"Geist Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.oamt{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-top:.4rem}
+.oamt s{opacity:.6;font-size:1.2rem}.oamt b{font-size:clamp(2rem,3.6vw,2.8rem);font-weight:500;letter-spacing:-.04em;line-height:1}
+.oamt em{font-style:normal;font-size:.85rem;font-weight:600;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.2)}
+.oigv{text-align:right;font-size:.85rem;opacity:.9}.oigv b{display:block;font-size:1.15rem;font-weight:600}
+.prices .price{padding:24px 30px}.price .amt{margin:.7rem 0 .4rem}
+/* ---------- terms ---------- */
+.terms{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;margin-top:2.5rem}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem}
+.split div{border-radius:16px;background:var(--ink);color:#fff;padding:18px}
+.split b{font-size:2rem;font-weight:500;letter-spacing:-.04em;display:block}
+.split span{font-size:.85rem;color:#a9b8cc}
+.tl{list-style:none;display:grid;gap:0;margin-top:1rem}
+.tl li{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:.94rem}
+.tl li b{font-weight:500;color:var(--primary)}
+
+
+.phases2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:2.2rem}
+.phh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:.6rem}
+.phh .tag{font-family:"Geist Mono",monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.dur{font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--primary-soft);color:#1a5da8}
+.sched{list-style:none}
+.sched li{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:11px 0;border-top:1px solid var(--line);font-size:.92rem;line-height:1.4}
+.sched li b{font-weight:500;color:var(--primary)} .sched li span{color:var(--muted)} .sched strong{color:var(--ink);font-weight:600}
+.p2c{background:var(--ink);border-color:var(--ink);color:#fff}
+.p2c .phh .tag{color:#8aa0bd}.p2c .dur{background:rgba(111,176,242,.16);color:#9cc9f5}
+.p2c .sched li{border-color:rgba(255,255,255,.1)}.p2c .sched li b{color:#6fb0f2}.p2c .sched li span{color:#a9b8cc}.p2c .sched strong{color:#fff}
+.guar{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.guar>div{display:flex;gap:14px;align-items:flex-start;padding:18px 20px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.guar .ic{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary)}
+.guar .ic svg{width:20px;height:20px}.guar h3{font-size:1rem}.guar p{font-size:.86rem;color:var(--muted);margin-top:.2rem}
+@media (max-width:900px){.phases2,.guar{grid-template-columns:1fr}}
+/* ---------- steps (close) ---------- */
+.next-steps{list-style:none;display:grid;gap:10px;margin-top:2.5rem;max-width:760px;counter-reset:s}
+.next-steps li{counter-increment:s;display:flex;align-items:center;gap:18px;padding:18px 22px;border-radius:18px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:1.05rem}
+.next-steps li::before{content:counter(s);flex:none;width:32px;height:32px;border-radius:50%;background:var(--primary);
+  display:grid;place-items:center;font:500 .85rem "Geist Mono",monospace}
+.sign{margin-top:2.5rem;font-size:.9rem;color:#8aa0bd}
+.sign b{color:#fff;font-weight:500}
+.fox{height:16px;width:auto;display:block;margin-top:.45rem;filter:brightness(0) invert(1)}
+.sign{display:flex;align-items:center;gap:18px;flex-wrap:wrap}.fox-lg{height:22px;margin:0}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .g3,.types{grid-template-columns:repeat(2,1fr)}
+  .road,.prices,.terms{grid-template-columns:1fr}
+  .plus{display:none}
+  .arch{grid-template-columns:1fr;gap:8px}
+  .link{flex-direction:row;padding:4px 0} .link svg{transform:rotate(90deg)}
+  .dots{display:none}
+}
+@media (max-width:900px), (max-height:720px){
+  .slide{justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+}
+@media (max-width:640px){
+  .g3,.g2,.types{grid-template-columns:1fr}
+  .card,.type{padding:18px} .type{min-height:0}
+  .flow{grid-template-columns:1fr !important;gap:14px}
+  .flow .rail{left:27px;right:auto;top:28px;bottom:28px;width:2px;height:auto}
+  .flow .rail i{transform-origin:top}
+  .node{display:grid;grid-template-columns:56px 1fr;column-gap:16px;align-items:center}
+  .node h3{margin-top:0} .node p{grid-column:2;max-width:none}
+  .hint,.count{display:none}
+  .flake{display:none}
+  .btn.next span{display:none} .btn.next{padding:0;width:48px}
+}
+@media (prefers-reduced-motion:reduce){ .progress,.node,.node .dot,.dots button{transition:none} }
+@media (prefers-reduced-transparency:reduce){ .btn{background:#fff;backdrop-filter:none} }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="top"><img src="__LOGO__" alt="Frío Norte"><span class="chap" id="chap"></span></header>
+<nav class="dots" id="dots" aria-label="Diapositivas"></nav>
+
+<main class="deck" id="deck">
+
+<!-- 1 · Portada -->
+<section class="slide dark cover" data-chapter="Propuesta">
+  <div class="orb" aria-hidden="true"></div>
+  <svg class="flake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=".7" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M4.9 7l14.2 10M4.9 17L19.1 7M9.5 3.5 12 6l2.5-2.5M9.5 20.5 12 18l2.5 2.5M3 9.7l3.4.9-.9 3.4M21 14.3l-3.4-.9.9-3.4M3 14.3l3.4-.9-.9-3.4M21 9.7l-3.4.9.9 3.4"/></svg>
+  <div class="inner">
+    <div class="a">
+      <div class="eyebrow">Propuesta digital · FoxCode</div>
+      <h1>Una plataforma a la altura de <span class="accent">Frío Norte</span>.</h1>
+      <p class="lead">Un sitio que genera clientes hoy, y una tienda que vende equipos mañana. Todo conectado.</p>
+    </div>
+    <div class="meta a">
+      <div>Cliente<b>Frío Norte S.A.C.</b></div>
+      <div>Preparado por<b><img class="fox" src="__FOX__" alt="FoxCode"></b></div>
+      <div>Fecha<b>Noviembre 2026</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · Diagnóstico -->
+<section class="slide" data-chapter="Diagnóstico">
+  <div class="inner">
+    <div class="eyebrow a">Situación actual · frionorte.com.pe</div>
+    <h2 class="a">Hoy la web no trabaja para la empresa.</h2>
+    <div class="grid g3">
+      <div class="card bad a"><div class="ic">__I_INBOX__</div><h3>Formulario sin destino</h3><p>Los contactos no llegan a ningún lado.</p></div>
+      <div class="card bad a"><div class="ic">__I_LOCK__</div><h3>Sin certificado SSL</h3><p>El navegador marca el sitio como inseguro.</p></div>
+      <div class="card bad a"><div class="ic">__I_GLOBE__</div><h3>Dominio sin control</h3><p>No tienen acceso total a su propio dominio.</p></div>
+      <div class="card bad a"><div class="ic">__I_CLOCK__</div><h3>Contenido desactualizado</h3><p>Equipos y proyectos que ya no reflejan a la empresa.</p></div>
+      <div class="card bad a"><div class="ic">__I_MSG__</div><h3>Mensaje poco claro</h3><p>No transmite la escala real del negocio.</p></div>
+      <div class="card bad a"><div class="ic">__I_MONITOR__</div><h3>Web estática</h3><p>Cada cambio depende de un programador.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · Qué debe comunicar -->
+<section class="slide dark" data-chapter="Mensaje">
+  <div class="inner">
+    <div class="eyebrow a">Qué debe comunicar</div>
+    <h2 class="a">Una empresa de climatización seria se reconoce en <span class="accent">seis señales</span>.</h2>
+    <div class="grid g3">
+      <div class="card a"><span class="num">01</span><h3 style="margin-top:.6rem">Respaldo técnico</h3><p>Años de experiencia, certificaciones y marcas con las que trabajan.</p></div>
+      <div class="card a"><span class="num">02</span><h3 style="margin-top:.6rem">Proyectos grandes</h3><p>Obras reales con fotos, capacidad instalada y cliente.</p></div>
+      <div class="card a"><span class="num">03</span><h3 style="margin-top:.6rem">Sectores que atienden</h3><p>Universidades, retail, restaurantes y salud.</p></div>
+      <div class="card a"><span class="num">04</span><h3 style="margin-top:.6rem">Servicio completo</h3><p>Venta, instalación, mantenimiento y reparación.</p></div>
+      <div class="card a"><span class="num">05</span><h3 style="margin-top:.6rem">Cotización fácil</h3><p>El cliente indica su espacio y recibe una propuesta.</p></div>
+      <div class="card a"><span class="num">06</span><h3 style="margin-top:.6rem">Confianza inmediata</h3><p>Sitio seguro, dominio propio, WhatsApp y respuesta rápida.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · Roadmap -->
+<section class="slide" data-chapter="Hoja de ruta">
+  <div class="inner">
+    <div class="eyebrow a">Hoja de ruta</div>
+    <h2 class="a">Dos fases. Una sola plataforma.</h2>
+    <div class="road">
+      <div class="phase p1 a">
+        <span class="tag">Fase 1</span>
+        <h3>Sitio web corporativo</h3>
+        <ul><li>Preparado para Google Ads</li><li>Cotizador y WhatsApp</li><li>Cada lead llega a Contralio</li><li>Proyectos actualizados desde Contralio</li></ul>
+        <div class="time">2 días de levantamiento + 1 semana</div>
+      </div>
+      <div class="plus a" aria-hidden="true">+</div>
+      <div class="phase p2 a">
+        <span class="tag">Fase 2 · potencia la fase 1</span>
+        <h3>Tienda de equipos</h3>
+        <ul><li>Catálogo con precios y compra en línea</li><li>Panel propio: stock, pedidos y ventas</li><li>Clientes y pedidos sincronizados con Contralio</li><li>Venta + instalación en un solo pedido</li></ul>
+        <div class="time">3 semanas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · Flujo fase 1 -->
+<section class="slide" data-chapter="Fase 1 · Cómo funciona" data-steps="5">
+  <div class="inner">
+    <div class="eyebrow a">Fase 1 · Cómo funciona</div>
+    <h2 class="a">Del anuncio al cliente, sin perder un contacto.</h2>
+    <div class="flow a" style="grid-template-columns:repeat(5,1fr)">
+      <div class="rail"><i></i></div>
+      <div class="node" data-n="1"><div class="dot">__I_MEGA__</div><h3>Google Ads</h3><p>Aparece cuando buscan aire acondicionado.</p></div>
+      <div class="node" data-n="2"><div class="dot">__I_MONITOR__</div><h3>Sitio web</h3><p>Equipos, servicios y proyectos.</p></div>
+      <div class="node" data-n="3"><div class="dot">__I_FORM__</div><h3>Cotización</h3><p>Formulario o WhatsApp.</p></div>
+      <div class="node contralio" data-n="4"><div class="dot">__I_HUB__</div><h3>Contralio</h3><p>El lead queda guardado y asignado.</p></div>
+      <div class="node" data-n="5"><div class="dot">__I_CHECK__</div><h3>Seguimiento</h3><p>El equipo responde y cierra.</p></div>
+    </div>
+    <p class="caption" data-captions='["Alguien en Chiclayo busca <b>“aire acondicionado para oficina”</b>. Frío Norte aparece primero.","Llega a un sitio que muestra <b>escala, marcas y proyectos reales</b>.","Pide una cotización en <b>menos de un minuto</b>.","El contacto entra a <b>Contralio</b>: queda registrado y el equipo recibe un aviso.","Nadie se pierde. Y la sección de proyectos <b>se alimenta sola desde Contralio</b>."]'></p>
+  </div>
+</section>
+
+<!-- 6 · Fase 2 intro -->
+<section class="slide dark" data-chapter="Fase 2 · Tienda">
+  <div class="inner">
+    <div class="eyebrow a">Fase 2 · Por qué una tienda</div>
+    <h2 class="a">Hoy cada venta empieza con una llamada. <span class="accent">Puede empezar con un clic.</span></h2>
+    <div class="grid g3">
+      <div class="card a"><div class="ic">__I_CLOCK__</div><h3>Vende 24/7</h3><p>El cliente residencial compra cuando quiere, sin esperar una cotización.</p></div>
+      <div class="card a"><div class="ic">__I_TOOL__</div><h3>Equipo + instalación</h3><p>Cada equipo vendido abre una instalación y un futuro mantenimiento.</p></div>
+      <div class="card a"><div class="ic">__I_CHART__</div><h3>Control real</h3><p>Stock, pedidos y ventas en un panel, no en hojas sueltas.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · Catálogo -->
+<section class="slide" data-chapter="Fase 2 · Catálogo">
+  <div class="inner">
+    <div class="eyebrow a">Fase 2 · Catálogo</div>
+    <h2 class="a">Cada equipo con su ficha, su precio y su instalación.</h2>
+    <div class="types">
+      <div class="type a"><div class="vis">__V_SPLIT__</div><h3>Split pared</h3><p>Hogares y oficinas</p></div>
+      <div class="type a"><div class="vis">__V_FLOOR__</div><h3>Piso techo</h3><p>Locales y salas amplias</p></div>
+      <div class="type a"><div class="vis">__V_CASSETTE__</div><h3>Cassette</h3><p>Comercios y retail</p></div>
+      <div class="type a"><div class="vis">__V_DUCT__</div><h3>Ductos y sistemas centrales</h3><p>Proyectos grandes</p></div>
+    </div>
+    <div class="chips a">
+      <span class="chip">Filtro por BTU</span><span class="chip">Inverter / On-Off</span><span class="chip">Marca</span>
+      <span class="chip">Calculadora por ambiente</span><span class="chip">Instalación opcional</span><span class="chip">Proyectos → cotización</span>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · Prototipo ecommerce -->
+<section class="slide" id="shop" data-chapter="Fase 2 · Pruébalo" data-steps="6">
+  <div class="inner">
+    <div class="eyebrow a">Fase 2 · Prototipo interactivo</div>
+    <h2 class="a" style="max-width:none">Pruébalo: una compra de principio a fin.</h2>
+    <div class="proto a">
+      <div class="psteps">
+        <ol id="psteps">
+          <li data-n="1"><b>Elige</b><span>Agrega uno o más equipos</span></li>
+          <li data-n="2"><b>Carrito</b><span>Suma la instalación</span></li>
+          <li data-n="3"><b>Paga</b><span>Pago en línea seguro</span></li>
+          <li data-n="4"><b>Panel</b><span>Pedido y stock al instante</span></li>
+          <li data-n="5" class="ctl"><b>Contralio</b><span>Cliente y pedido sincronizados</span></li>
+          <li data-n="6"><b>Entrega</b><span>Despacho e instalación</span></li>
+        </ol>
+        <p class="caption pcap" data-captions='["Toca <b>Agregar</b> en uno o más equipos. Es una tienda real.","El cliente suma la <b>instalación</b> en un toque. Una venta, dos servicios.","Paga en línea con una pasarela segura <b>(Mercado Pago, por definir)</b>.","En el <b>panel de Frío Norte</b> aparece el pedido y el stock se descuenta solo.","En <b>Contralio</b> el cliente y su pedido se suman a su historial comercial.","Se agenda despacho, instalación y el <b>próximo mantenimiento</b>."]'></p>
+      </div>
+      <div class="device">
+        <div class="bar"><i></i><i></i><i></i><span id="purl">frionorte.com.pe/tienda</span><em id="pbadge" class="badge">0</em></div>
+        <div class="screen">
+          <!-- 1 -->
+          <div class="view" data-v="1">
+            <div class="vhead"><b>Equipos de aire acondicionado</b><div class="fchips"><span class="on">Todos</span><span>Inverter</span><span>12k–24k BTU</span><span>+36k BTU</span></div></div>
+            <div class="pgrid" id="pgrid"></div>
+          </div>
+          <!-- 2 -->
+          <div class="view" data-v="2">
+            <div class="vhead"><b>Tu carrito</b></div>
+            <div id="plines"></div>
+            <div class="tot"><span>Total</span><b id="ptotal">S/ 0</b></div>
+          </div>
+          <!-- 3 -->
+          <div class="view" data-v="3">
+            <div class="vhead"><b>Pago seguro</b><span class="lock">🔒 Conexión cifrada</span></div>
+            <div class="methods" id="pmeth"><button class="on" data-m="mp"><b>Mercado Pago</b><span>Tarjeta · Yape · cuotas</span></button><button data-m="tr"><b>Transferencia</b><span>BCP · Interbank</span></button></div>
+            <div class="paybox">
+              <div class="fld"><span>Nombre</span><b>María Torres</b></div>
+              <div class="fld"><span>Tarjeta</span><b>•••• •••• •••• 4821</b></div>
+              <button class="paybtn" id="paybtn"><span id="paylbl">Pagar S/ 0</span></button>
+              <div class="ok" id="payok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg><b>Pago aprobado</b><span>Pedido #FN-1042</span></div>
+            </div>
+          </div>
+          <!-- 4 -->
+          <div class="view admin" data-v="4">
+            <aside><b>Panel</b><span class="on">Pedidos</span><span>Stock</span><span>Ventas</span><span>Catálogo</span></aside>
+            <div class="amain">
+              <div class="kpis"><div><span>Ventas hoy</span><b id="kv">S/ 3,480</b></div><div><span>Pedidos</span><b id="kp">6</b></div><div><span>Por instalar</span><b id="ki">2</b></div></div>
+              <div class="tbl"><div class="th"><span>Pedido</span><span>Cliente</span><span>Total</span><span>Estado</span></div><div id="orders"></div></div>
+              <div class="tbl"><div class="th"><span>Equipo</span><span></span><span>Stock</span><span></span></div><div id="stock"></div></div>
+            </div>
+          </div>
+          <!-- 5 -->
+          <div class="view crm" data-v="5">
+            <div class="cli"><div class="av">MT</div><div><b>María Torres</b><span>Chiclayo · 987 654 321</span></div><em>Cliente</em></div>
+            <div class="tl2" id="crmtl">
+              <div><i></i><b>Lead · cotización web</b><span>Hace 3 meses · formulario del sitio</span></div>
+              <div><i></i><b>Seguimiento de ventas</b><span>Hace 2 meses · llamada</span></div>
+              <div class="new"><i></i><b id="crmorder">Pedido #FN-1042</b><span>Hoy · desde la tienda en línea</span></div>
+            </div>
+            <p class="crmnote">Stock no viaja a Contralio: solo cliente, leads y pedidos.</p>
+          </div>
+          <!-- 6 -->
+          <div class="view" data-v="6">
+            <div class="vhead"><b>Seguimiento del pedido #FN-1042</b></div>
+            <div class="track" id="track">
+              <div><i></i><b>Pago confirmado</b><span>Hoy, 10:42</span></div>
+              <div><i></i><b>Despacho</b><span>Mañana · Chiclayo</span></div>
+              <div><i></i><b>Instalación</b><span id="inst">Jueves, 9:00 a. m.</span></div>
+              <div><i></i><b>Próximo mantenimiento</b><span>En 6 meses · recordatorio automático</span></div>
+            </div>
+            <div class="toast" id="toast"><b>WhatsApp · Frío Norte</b><span>Hola María, tu equipo llega mañana. Instalación el jueves a las 9:00.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="fine a" style="margin-top:1rem">Prototipo ilustrativo · productos y precios de ejemplo.</p>
+  </div>
+</section>
+
+<!-- 9 · Arquitectura -->
+<section class="slide dark" data-chapter="Fase 2 · Arquitectura" data-steps="3">
+  <div class="inner">
+    <div class="eyebrow a">Cómo se conecta</div>
+    <h2 class="a">Cada sistema hace lo suyo. <span class="accent">Contralio los une.</span></h2>
+    <div class="arch a">
+      <div class="box s1"><span class="tag">Lo que ve el cliente</span><h3>Sitio + tienda</h3>
+        <ul><li>Catálogo y fichas</li><li>Carrito y pago</li><li>Cotizador</li><li>Proyectos</li></ul></div>
+      <div class="link s2">__I_ARROW__<span>Pedidos</span></div>
+      <div class="box panel s2"><span class="tag">Panel de administración</span><h3>Operación de la tienda</h3>
+        <ul><li>Stock por equipo</li><li>Pedidos y estados</li><li>Ventas y reportes</li><li>Precios, ofertas y catálogo</li></ul></div>
+      <div class="link s3">__I_SYNC__<span>Clientes<br>leads · pedidos</span></div>
+      <div class="box ctl s3"><span class="tag">Canal comercial</span><h3>Contralio</h3>
+        <ul><li>Clientes</li><li>Leads del sitio</li><li>Pedidos</li><li class="no">Stock</li></ul></div>
+    </div>
+    <p class="note a">El stock vive en el panel. A Contralio solo llega lo comercial: <b>quién compró, qué compró y quién pidió una cotización</b>. Así el equipo de ventas ve a cada cliente en un solo lugar.</p>
+  </div>
+</section>
+
+<!-- 10 · Inversión -->
+<section class="slide" data-chapter="Inversión">
+  <div class="inner">
+    <div class="eyebrow a">Inversión</div>
+    <h2 class="a">Claro desde el inicio.</h2>
+    <div class="prices">
+      <div class="price a"><span class="tag">Fase 1 · Sitio web corporativo</span>
+        <div class="amt"><small>S/</small>3,500</div><div class="igv">+ IGV · S/ 4,130 total</div>
+        <ul><li>__I_TICK__Sitio preparado para Google Ads</li><li>__I_TICK__Captura de leads conectada a Contralio</li><li>__I_TICK__SSL y dominio bajo su control</li><li>__I_TICK__Entrega: 2 días + 1 semana</li></ul></div>
+      <div class="price p2 a"><span class="tag">Fase 2 · Ecommerce</span>
+        <div class="amt"><small>S/</small>4,000</div><div class="igv">+ IGV · S/ 4,720 total</div>
+        <ul><li>__I_TICK__Tienda con catálogo y pago en línea</li><li>__I_TICK__Panel de stock, pedidos y ventas incluido</li><li>__I_TICK__Sincronización con Contralio</li><li>__I_TICK__Entrega: 3 semanas · Servidor S/ 420 / año</li></ul></div>
+    </div>
+    <div class="offer a">
+      <div><span class="tag">Si cierran hoy · ambas fases</span><div class="oamt"><s>S/ 7,500</s><b>S/ 6,000</b><em>Ahorran S/ 1,500</em></div></div>
+      <div class="oigv">+ IGV<b>S/ 7,080 total</b></div>
+    </div>
+    <p class="fine a">La inversión en publicidad (Google Ads) se define aparte y la paga el cliente directamente a Google.</p>
+  </div>
+</section>
+
+<!-- 11 · Condiciones -->
+<section class="slide" data-chapter="Condiciones">
+  <div class="inner">
+    <div class="eyebrow a">Condiciones y garantías</div>
+    <h2 class="a">Sin sorpresas. Avance visible cada semana.</h2>
+    <div class="phases2">
+      <div class="card ph a">
+        <div class="phh"><span class="tag">Fase 1 · Sitio web corporativo</span><span class="dur">≈ 9 días</span></div>
+        <ul class="sched">
+          <li><b>Inicio</b><span>Firma del contrato y <strong>50% de adelanto</strong></span></li>
+          <li><b>Días 1–2</b><span>Levantamiento: equipos, servicios, proyectos y fotos</span></li>
+          <li><b>Semana 1</b><span>Desarrollo + <strong>reunión semanal</strong> de revisión de avance</span></li>
+          <li><b>Entrega</b><span>Sitio publicado, Contralio conectado y <strong>50% final</strong></span></li>
+        </ul>
+      </div>
+      <div class="card ph p2c a">
+        <div class="phh"><span class="tag">Fase 2 · Ecommerce</span><span class="dur">3 semanas</span></div>
+        <ul class="sched">
+          <li><b>Inicio</b><span>Firma y <strong>50% de adelanto</strong></span></li>
+          <li><b>Semana 1</b><span>Catálogo y panel de stock · <strong>reunión semanal</strong></span></li>
+          <li><b>Semana 2</b><span>Carrito, pagos y sincronización con Contralio · <strong>reunión semanal</strong></span></li>
+          <li><b>Semana 3</b><span>Pruebas, capacitación y lanzamiento · <strong>reunión de cierre</strong> y 50% final</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="guar">
+      <div class="a"><div class="ic">__I_CLOCK__</div><div><h3>Entrega en el plazo</h3><p>Fechas fijadas por contrato.</p></div></div>
+      <div class="a"><div class="ic">__I_SHIELD__</div><div><h3>Ningún lead perdido</h3><p>Todo contacto queda guardado y notificado.</p></div></div>
+      <div class="a"><div class="ic">__I_TOOL__</div><div><h3>30 días de ajustes</h3><p>Cambios sin costo tras cada entrega.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · Próximos pasos -->
+<section class="slide dark" data-chapter="Próximos pasos">
+  <div class="orb" aria-hidden="true" style="opacity:.6"></div>
+  <div class="inner">
+    <div class="eyebrow a">Próximos pasos</div>
+    <h2 class="a">Empezamos esta semana.</h2>
+    <ol class="next-steps">
+      <li class="a">Firmar el contrato y abonar el 50% de la fase 1</li>
+      <li class="a">Recuperar el dominio y reunir logos, fotos y proyectos</li>
+      <li class="a">Levantamiento de información (2 días)</li>
+      <li class="a">Lanzamiento del sitio (1 semana) y arranque de la fase 2</li>
+    </ol>
+    <div class="sign a"><img class="fox fox-lg" src="__FOX__" alt="FoxCode"><span>Propuesta preparada para <b>Frío Norte S.A.C.</b></span></div>
+  </div>
+</section>
+
+</main>
+
+<div class="hint" id="hint">↓ Desliza o usa las flechas</div>
+<div class="controls">
+  <span class="count" id="count">01 / 12</span>
+  <button class="btn prev" id="prev" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="btn next" id="next" aria-label="Siguiente"><span>Siguiente</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = id => document.getElementById(id);
+  let cur = 0, step = 0, busy = false;
+  const stepsOf = s => +(s.dataset.steps || 0);
+
+  // dots
+  slides.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', s.dataset.chapter);
+    b.onclick = () => goTo(i);
+    $('dots').appendChild(b);
+  });
+
+  function chrome() {
+    const s = slides[cur];
+    document.body.classList.toggle('on-dark', s.classList.contains('dark'));
+    $('chap').textContent = s.dataset.chapter;
+    $('count').textContent = String(cur + 1).padStart(2, '0') + ' / ' + slides.length;
+    $('prev').disabled = cur === 0 && step === 0;
+    $('next').disabled = cur === slides.length - 1;
+    [...$('dots').children].forEach((d, i) => d.classList.toggle('on', i === cur));
+    $('progress').style.width = ((cur + 1) / slides.length * 100) + '%';
+    if (cur > 0) $('hint').style.opacity = 0;
+    history.replaceState(null, '', '#' + (cur + 1));
+  }
+
+
+  // ---------- prototype tienda ----------
+  const proto = (() => {
+    const root = document.getElementById('shop'); if (!root) return null;
+    const svgs = {
+      split:'<svg viewBox="0 0 120 50" fill="none" stroke="currentColor" stroke-width="3"><rect x="4" y="8" width="112" height="28" rx="8"/><path d="M16 28h88" stroke-linecap="round"/></svg>',
+      floor:'<svg viewBox="0 0 120 50" fill="none" stroke="currentColor" stroke-width="3"><rect x="8" y="6" width="104" height="34" rx="6"/><path d="M20 30h80" stroke-linecap="round"/></svg>',
+      cas:'<svg viewBox="0 0 120 50" fill="none" stroke="currentColor" stroke-width="3"><rect x="34" y="3" width="52" height="44" rx="6"/><rect x="46" y="15" width="28" height="20" rx="3"/></svg>'};
+    const P = [
+      {id:1,n:'Split pared 12 000 BTU',t:'Inverter · hogar u oficina',p:1899,s:8,v:'split'},
+      {id:2,n:'Split pared 18 000 BTU',t:'Inverter · ambientes medianos',p:2690,s:5,v:'split'},
+      {id:3,n:'Cassette 24 000 BTU',t:'Comercios y retail',p:4350,s:4,v:'cas'},
+      {id:4,n:'Piso techo 36 000 BTU',t:'Salas y locales amplios',p:5490,s:3,v:'floor'}];
+    const INST = 250;
+    const cart = new Map(); // id -> {inst:bool}
+    let paid = false, shown = 0;
+    const q = s => root.querySelector(s);
+    const money = n => 'S/ ' + n.toLocaleString('en-US');
+    const total = () => [...cart].reduce((a,[id,o]) => a + P.find(p=>p.id===id).p + (o.inst?INST:0), 0);
+    const pulse = el => !reduce && gsap.fromTo(el,{scale:1.35},{scale:1,duration:.5,ease:'back.out(3)'});
+    const urls = ['','frionorte.com.pe/tienda','frionorte.com.pe/carrito','frionorte.com.pe/pago','panel.frionorte.com.pe/pedidos','contralio · clientes','frionorte.com.pe/pedido/FN-1042'];
+
+    function grid(){
+      q('#pgrid').innerHTML = P.map(p => `<div class="prod ${cart.has(p.id)?'in':''}" data-id="${p.id}"><div class="ph">${svgs[p.v]}</div><b>${p.n}</b><small>${p.t}</small><span class="pr">${money(p.p)}</span><small>${p.s} en stock</small><button>${cart.has(p.id)?'✓ Agregado':'Agregar'}</button></div>`).join('');
+    }
+    function badge(){ const b=q('#pbadge'); b.textContent=cart.size; pulse(b); }
+    q('#pgrid').addEventListener('click', e => {
+      const card = e.target.closest('.prod'); if (!card || !e.target.closest('button')) return;
+      const id = +card.dataset.id;
+      cart.has(id) ? cart.delete(id) : cart.set(id,{inst:true});
+      paid = false; grid(); badge();
+    });
+    function lines(){
+      q('#plines').innerHTML = [...cart].map(([id,o]) => { const p=P.find(x=>x.id===id);
+        return `<div class="line" data-id="${id}"><div class="ph">${svgs[p.v]}</div><div><b>${p.n}</b><small>${money(p.p)}</small><div class="tog ${o.inst?'on':''}"><i></i>Instalación profesional +${money(INST)}</div></div><span class="pr">${money(p.p+(o.inst?INST:0))}</span></div>`; }).join('');
+      q('#ptotal').textContent = money(total());
+      q('#paylbl').textContent = 'Pagar ' + money(total());
+    }
+    q('#plines').addEventListener('click', e => {
+      const t = e.target.closest('.tog'); if (!t) return;
+      const o = cart.get(+t.closest('.line').dataset.id); o.inst = !o.inst; lines(); pulse(q('#ptotal'));
+    });
+    q('#pmeth').addEventListener('click', e => { const b=e.target.closest('button'); if(!b) return;
+      q('#pmeth .on').classList.remove('on'); b.classList.add('on'); });
+    function pay(instant){
+      const btn=q('#paybtn'), ok=q('#payok');
+      if (paid || instant || reduce) { paid=true; gsap.set(ok,{autoAlpha:1,scale:1}); return; }
+      btn.classList.add('load');
+      setTimeout(() => { btn.classList.remove('load'); paid=true;
+        gsap.fromTo(ok,{autoAlpha:0,scale:.92},{autoAlpha:1,scale:1,duration:.5,ease:'back.out(1.6)'});
+        gsap.fromTo(ok.querySelector('svg'),{scale:0,rotate:-30},{scale:1,rotate:0,duration:.6,ease:'back.out(2.4)',delay:.1}); }, 1100);
+    }
+    q('#paybtn').addEventListener('click', () => pay());
+    function admin(){
+      const t = total(), qty = cart.size;
+      q('#orders').innerHTML = `<div class="tr hl"><span class="mono">#FN-1042</span><span>María Torres</span><span>${money(t)}</span><span class="pill">Pagado</span></div>
+        <div class="tr"><span class="mono">#FN-1041</span><span>Clínica San José</span><span>S/ 2,180</span><span class="pill w">Por instalar</span></div>
+        <div class="tr"><span class="mono">#FN-1040</span><span>Café Norte</span><span>S/ 1,300</span><span class="pill">Entregado</span></div>`;
+      q('#stock').innerHTML = P.map(p => `<div class="tr ${cart.has(p.id)?'hl':''}"><span style="grid-column:span 2">${p.n}</span><span class="stk ${cart.has(p.id)?'dn':''}" data-from="${p.s}" data-to="${p.s-(cart.has(p.id)?1:0)}">${p.s}</span><span></span></div>`).join('');
+      q('#kv').textContent = money(3480 + t); q('#kp').textContent = 7; q('#ki').textContent = 2 + [...cart.values()].filter(o=>o.inst).length;
+      if (!reduce) {
+        gsap.fromTo(q('#orders .tr.hl'),{y:-14,opacity:0},{y:0,opacity:1,duration:.6,ease:'expo.out',delay:.2});
+        root.querySelectorAll('.stk.dn').forEach(el => { const o={v:+el.dataset.from};
+          gsap.to(o,{v:+el.dataset.to,duration:.8,delay:.7,ease:'power2.out',onUpdate:()=>el.textContent=Math.round(o.v)}); });
+      } else root.querySelectorAll('.stk.dn').forEach(el=>el.textContent=el.dataset.to);
+    }
+    function crm(){
+      const items=[...cart.keys()].map(id=>P.find(p=>p.id===id).n.split(' ').slice(0,2).join(' '));
+      q('#crmorder').textContent = `Pedido #FN-1042 · ${money(total())}`;
+      q('#crmtl .new span').textContent = 'Hoy · tienda en línea · ' + items.join(', ');
+      if (!reduce) gsap.fromTo(q('#crmtl .new'),{x:24,opacity:0},{x:0,opacity:1,duration:.7,ease:'expo.out',delay:.25});
+    }
+    function track(){
+      const rows=[...root.querySelectorAll('#track > div')];
+      rows.forEach(r=>r.classList.remove('on'));
+      q('#inst').textContent = [...cart.values()].some(o=>o.inst) ? 'Jueves, 9:00 a. m.' : 'No solicitada';
+      rows.forEach((r,i)=>setTimeout(()=>{ if(shown===6) r.classList.add('on'); }, reduce?0:250+i*280));
+      if (!reduce) gsap.fromTo(q('#toast'),{y:20,opacity:0},{y:0,opacity:1,duration:.6,ease:'expo.out',delay:1.4}); else gsap.set(q('#toast'),{opacity:1});
+    }
+    function go(n){
+      if (n >= 2 && cart.size === 0) { cart.set(1,{inst:true}); grid(); badge(); }
+      if (n > 3 && !paid) pay(true);
+      if (n === 1) grid();
+      if (n === 2 || n === 3) lines();
+      if (n === 3) { if (!paid) { gsap.set(q('#payok'),{autoAlpha:0}); setTimeout(()=>{ if(shown===3) pay(); }, reduce?0:700); } else gsap.set(q('#payok'),{autoAlpha:1}); }
+      if (n === 4) admin();
+      if (n === 5) crm();
+      if (n === 6) track();
+      root.querySelectorAll('#psteps li').forEach(li => { const k=+li.dataset.n; li.classList.toggle('done',k<n); li.classList.toggle('cur',k===n); });
+      q('#purl').textContent = urls[n] || urls[1];
+      const prev = root.querySelector(`.view[data-v="${shown}"]`), next = root.querySelector(`.view[data-v="${n}"]`);
+      if (prev && prev !== next) gsap.to(prev,{autoAlpha:0,x:n>shown?-30:30,duration:reduce?0:.3,ease:'power2.in'});
+      gsap.fromTo(next,{autoAlpha:0,x:reduce?0:(n>=shown?40:-40)},{autoAlpha:1,x:0,duration:reduce?.15:.6,ease:'expo.out',delay:prev&&prev!==next&&!reduce?.12:0});
+      if (!reduce && next) gsap.fromTo(next.children,{y:12,opacity:0},{y:0,opacity:1,duration:.5,stagger:.05,ease:'expo.out',delay:.18});
+      shown = n;
+    }
+    root.querySelector('#psteps').addEventListener('click', e => { const li=e.target.closest('li'); if(li) window.__setStep(+li.dataset.n); });
+    grid();
+    return { go };
+  })();
+
+  // steps inside a slide (flows / architecture)
+  function renderSteps(s, n, animate = true) {
+    const max = stepsOf(s); if (!max) return;
+    if (s.id === 'shop' && proto && n) proto.go(n);
+    const nodes = s.querySelectorAll('.node');
+    nodes.forEach(el => {
+      const k = +el.dataset.n;
+      el.classList.toggle('on', k <= n);
+      el.classList.toggle('cur', k === n);
+    });
+    const rail = s.querySelector('.rail i');
+    if (rail) {
+      // anclar la línea al centro del primer y último ícono, y llenar hasta el ícono actual
+      const vertical = innerWidth <= 640;
+      const flow = rail.parentElement.parentElement, fr = flow.getBoundingClientRect();
+      const c = el => { const r = el.querySelector('.dot').getBoundingClientRect(); return vertical ? r.top + r.height / 2 - fr.top : r.left + r.width / 2 - fr.left; };
+      const first = c(nodes[0]), last = c(nodes[nodes.length - 1]);
+      const at = n ? c(nodes[Math.min(n, nodes.length) - 1]) : first;
+      const box = rail.parentElement;
+      if (vertical) Object.assign(box.style, { top: first + 'px', height: (last - first) + 'px', bottom: 'auto', left: '', width: '' });
+      else Object.assign(box.style, { left: first + 'px', width: (last - first) + 'px', right: 'auto', top: '', height: '' });
+      const p = last > first ? (at - first) / (last - first) : 0;
+      gsap.to(rail, { scaleX: vertical ? 1 : p, scaleY: vertical ? p : 1, duration: animate && !reduce ? .7 : 0, ease: 'expo.out' });
+    }
+    const cap = s.querySelector('.caption');
+    if (cap) {
+      const list = JSON.parse(cap.dataset.captions);
+      const html = n ? list[n - 1] : '';
+      if (animate && !reduce) {
+        gsap.to(cap, { opacity: 0, y: -6, duration: .15, onComplete: () => {
+          cap.innerHTML = html; gsap.fromTo(cap, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .45, ease: 'expo.out' });
+        }});
+      } else cap.innerHTML = html;
+    }
+    for (let k = 1; k <= 3; k++) s.querySelectorAll('.s' + k).forEach(el =>
+      gsap.to(el, { opacity: k <= n ? 1 : .12, y: k <= n ? 0 : 10, duration: animate && !reduce ? .6 : 0, ease: 'expo.out' }));
+  }
+
+  function enter(s, dir) {
+    const items = s.querySelectorAll('.a, .grid > .card, .types > .type');
+    gsap.set(s, { visibility: 'visible', zIndex: 2 });
+    s.scrollTop = 0;
+    if (reduce) { gsap.fromTo(s, { opacity: 0 }, { opacity: 1, duration: .25 }); gsap.set(items, { opacity: 1, y: 0 }); return; }
+    gsap.fromTo(s, { opacity: 0, y: dir * 60 }, { opacity: 1, y: 0, duration: .8, ease: 'expo.out' });
+    gsap.fromTo(items, { opacity: 0, y: dir * 28 }, { opacity: 1, y: 0, duration: .9, ease: 'expo.out', stagger: .045, delay: .08 });
+  }
+  function leave(s, dir) {
+    gsap.set(s, { zIndex: 1 });
+    gsap.to(s, { opacity: 0, y: -dir * 40, duration: reduce ? .2 : .45, ease: 'power2.in',
+      onComplete: () => gsap.set(s, { visibility: 'hidden' }) });
+  }
+
+  function goTo(i, toStep) {
+    if (i < 0 || i >= slides.length || (i === cur && toStep === undefined)) return;
+    const dir = i > cur ? 1 : -1;
+    leave(slides[cur], dir);
+    cur = i;
+    const s = slides[cur];
+    step = toStep !== undefined ? toStep : (dir > 0 ? 0 : stepsOf(s));
+    renderSteps(s, step, false);
+    if (stepsOf(s) && step === 0) setTimeout(() => { if (slides[cur] === s && step === 0) { step = 1; renderSteps(s, 1); chrome(); } }, reduce ? 0 : 650);
+    enter(s, dir);
+    chrome();
+    busy = true; setTimeout(() => busy = false, reduce ? 250 : 700);
+  }
+  function next() {
+    const s = slides[cur];
+    if (step < stepsOf(s)) { step++; renderSteps(s, step); chrome(); lock(380); return; }
+    goTo(cur + 1);
+  }
+  function prev() {
+    const s = slides[cur];
+    if (step > 1) { step--; renderSteps(s, step); chrome(); lock(380); return; }
+    goTo(cur - 1);
+  }
+  function lock(ms) { busy = true; setTimeout(() => busy = false, ms); }
+
+  window.__setStep = n => { step = n; renderSteps(slides[cur], n); chrome(); };
+  $('next').onclick = next;
+  $('prev').onclick = prev;
+  addEventListener('keydown', e => {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); if (!busy) next(); }
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); if (!busy) prev(); }
+    if (e.key === 'Home') goTo(0); if (e.key === 'End') goTo(slides.length - 1);
+  });
+
+  // wheel: let inner scroll finish first (small screens), then change slide
+  let acc = 0, accT;
+  addEventListener('wheel', e => {
+    const s = slides[cur];
+    const canScroll = s.scrollHeight > s.clientHeight + 2;
+    if (canScroll) {
+      const atTop = s.scrollTop <= 0, atBottom = s.scrollTop + s.clientHeight >= s.scrollHeight - 2;
+      if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) return;
+    }
+    e.preventDefault();
+    if (busy) return;
+    acc += e.deltaY; clearTimeout(accT); accT = setTimeout(() => acc = 0, 160);
+    if (Math.abs(acc) > 40) { acc > 0 ? next() : prev(); acc = 0; }
+  }, { passive: false });
+
+  // touch swipe (vertical or horizontal), respects inner scroll
+  let tx = 0, ty = 0, st = 0;
+  addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; st = slides[cur].scrollTop; }, { passive: true });
+  addEventListener('touchend', e => {
+    if (e.target.closest('.controls')) return;
+    const s = slides[cur];
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); return; }
+    if (Math.abs(dy) < 60 || busy) return;
+    const atTop = st <= 0, atBottom = st + s.clientHeight >= s.scrollHeight - 2;
+    if (dy < 0 && atBottom) next();
+    if (dy > 0 && atTop) prev();
+  }, { passive: true });
+
+  addEventListener('resize', () => renderSteps(slides[cur], step, false));
+
+  // start (supports #n deep link)
+  const start = Math.min(Math.max((parseInt(location.hash.slice(1)) || 1) - 1, 0), slides.length - 1);
+  cur = start; step = stepsOf(slides[cur]) ? 1 : 0;
+  renderSteps(slides[cur], step, false);
+  enter(slides[cur], 1);
+  chrome();
+})();
+</script>
+</body>
+</html>

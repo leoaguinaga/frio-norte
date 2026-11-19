@@ -16,10 +16,12 @@ interface Props {
   fit?: 'cover' | 'contain';
   /** Tailwind object-position class, e.g. "object-right". */
   position?: string;
+  /** Astro view-transition name, to morph this photo between pages. */
+  transitionName?: string;
 }
-const { src, alt, class: cls, eager = false, sizes, width = 1200, height = 800, fit = 'cover', position } = Astro.props;
+const { src, alt, class: cls, eager = false, sizes, width = 1200, height = 800, fit = 'cover', position, transitionName } = Astro.props;
 ---
-<div class:list={['relative overflow-hidden bg-surface-muted', cls]}>
+<div class:list={['relative overflow-hidden bg-surface-muted', cls]} transition:name={transitionName}>
   {src ? (
     <>
       <div class="skeleton absolute inset-0" aria-hidden="true" />

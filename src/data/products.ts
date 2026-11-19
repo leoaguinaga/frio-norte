@@ -25,13 +25,13 @@ export const installTypes: { id: InstallType; label: string; use: string }[] = [
 // TODO(Frío Norte): confirm models, specs and prices.
 export const products: Product[] = [
   { slug: 'lg-artcool-smart', name: 'LG Artcool Smart', brand: 'LG', type: 'split', mode: 'Frío / Calor', summary: 'Espejo negro, Wi-Fi y Dual Inverter. El favorito para salas y gerencias.', capacities: [12000, 18000], price: null,
-    featured: { badge: 'Más vendido', seer: 22, db: 19, area: '15–30', savings: 60 },
+    featured: { badge: 'Más vendido', seer: 22, db: 19, area: '40–75', savings: 60 },
     specs: [['Tecnología', 'Dual Inverter'], ['Refrigerante', 'R-32'], ['Conectividad', 'Wi-Fi · LG ThinQ'], ['Voltaje', '220 V / 60 Hz'], ['Garantía', '5 años compresor · 1 año general']] },
   { slug: 'lg-dualcool', name: 'LG Dualcool Inverter', brand: 'LG', type: 'split', mode: 'Solo frío', summary: 'La mejor relación precio–ahorro para hogares y oficinas.', capacities: [12000, 18000, 24000], price: null,
-    featured: { badge: 'Mejor ahorro', seer: 20, db: 21, area: '15–40', savings: 70 },
+    featured: { badge: 'Mejor ahorro', seer: 20, db: 21, area: '40–100', savings: 70 },
     specs: [['Tecnología', 'Dual Inverter'], ['Refrigerante', 'R-32'], ['Voltaje', '220 V / 60 Hz'], ['Garantía', '5 años compresor']] },
   { slug: 'lg-cassette-4-vias', name: 'LG Cassette 4 vías', brand: 'LG', type: 'cassette', mode: 'Frío / Calor', summary: 'Se integra al techo falso y reparte el aire de forma uniforme.', capacities: [18000, 24000, 36000, 48000], price: null,
-    featured: { badge: 'Para empresas', seer: 16, db: 32, area: '30–80', savings: 45 },
+    featured: { badge: 'Para empresas', seer: 16, db: 32, area: '75–200', savings: 45 },
     specs: [['Tecnología', 'Inverter'], ['Distribución', '4 vías'], ['Voltaje', '220 V / 60 Hz']] },
   { slug: 'lg-techo-suspendido', name: 'LG Techo Suspendido', brand: 'LG', type: 'techo', mode: 'Frío / Calor', summary: 'Diseño en V y panel negro para salones amplios.', capacities: [18000, 24000, 36000, 60000], price: null, specs: [['Tecnología', 'Inverter']] },
   { slug: 'daikin-split-inverter', name: 'Daikin Split Inverter', brand: 'Daikin', type: 'split', mode: 'Solo frío', summary: 'Silencioso y eficiente.', capacities: [9000, 12000, 18000, 24000], price: null, specs: [['Tecnología', 'Inverter']] },

@@ -14,10 +14,12 @@ const sectors = ['Todos', ...new Set(projects.map((p) => p.sector))];
   </div>
 </div>
 <script>
+  document.addEventListener('astro:page-load', () => {
   const btns = [...document.querySelectorAll<HTMLButtonElement>('[data-sector-filters] button')];
   const cards = [...document.querySelectorAll<HTMLElement>('[data-project-grid] > a')];
   btns.forEach((b) => b.addEventListener('click', () => {
     btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     cards.forEach((c) => { c.hidden = b.dataset.sector !== 'Todos' && c.dataset.sector !== b.dataset.sector; });
   }));
+  });
 </script>

@@ -1,0 +1,85 @@
+---
+import Section from "../ui/Section.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import Photo from "../ui/Photo.astro";
+import { sectors } from "../../data/home";
+import { projectImage } from "../../lib/images";
+
+const check = "M8 12.5l2.7 2.7L16 9.8";
+---
+
+<Section class="pt-0 lg:pt-0">
+  <SectionHeader
+    eyebrow="Especialidades"
+    title="Climatización pensada para cada tipo de espacio"
+  />
+  <div class="grid gap-4 md:grid-cols-3">
+    {sectors.map((s, i) => (
+      <article
+        class="flex flex-col rounded-[28px] bg-surface p-2"
+        data-reveal
+        style={`--i:${i}`}
+      >
+        <Photo
+          src={s.photo ? projectImage(s.photo) : undefined}
+          alt={`Climatización para ${s.title.toLowerCase()}`}
+          class="aspect-[373/260] rounded-[20px]"
+          sizes="(min-width: 768px) 33vw, 100vw"
+        />
+        <div class="flex flex-1 flex-col gap-4 px-5 pt-6 pb-5">
+          <p class="text-caption text-primary">{s.tag}</p>
+          <h3 class="text-h3">{s.title}</h3>
+          <p class="text-muted text-pretty">{s.summary}</p>
+          {s.clients.length > 0 && (
+            <div class="flex flex-col gap-2 rounded-2xl bg-canvas px-4 py-3.5">
+              <p class="text-caption text-muted">Han confiado en nosotros</p>
+              <p class="font-semibold">{s.clients.join(" · ")}</p>
+            </div>
+          )}
+          <ul class="flex flex-col gap-3 pt-1">
+            {s.benefits.map((b) => (
+              <li class="flex gap-2.5 text-[15px] leading-snug">
+                <svg
+                  class="size-5 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10" class="fill-primary-soft" />
+                  <path
+                    d={check}
+                    class="stroke-primary"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                {b}
+              </li>
+            ))}
+          </ul>
+          <a
+            href="/proyectos"
+            class="group mt-auto inline-flex items-center gap-1.5 border-t border-line pt-4 text-label text-primary transition-transform duration-100 ease-out active:scale-[0.98]"
+          >
+            Ver proyectos
+            <svg
+              class="size-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 12h14M13 6l6 6-6 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
+      </article>
+    ))}
+  </div>
+</Section>
