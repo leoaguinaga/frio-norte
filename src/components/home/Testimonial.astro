@@ -1,12 +1,94 @@
 ---
 import Section from '../ui/Section.astro';
 import Eyebrow from '../ui/Eyebrow.astro';
-import { testimonial as t } from '../../data/home';
+import Photo from '../ui/Photo.astro';
+import Badge from '../ui/Badge.astro';
+import { testimonials, reviewSummary, type Testimonial } from '../../data/home';
+import { getProjects } from '../../lib/contralio';
+import { projectImage } from '../../lib/images';
+
+// Resolve each quote's project so it can carry real context (photo, system, city) and a link.
+const projects = await getProjects();
+const items = testimonials.map((t) => ({ ...t, project: projects.find((p) => p.slug === t.projectSlug) }));
+const featured = items.find((t) => t.featured) ?? items[0];
+const rest = items.filter((t) => t !== featured).slice(0, 2);
+
+const initials = (name: string) => name.split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+const byline = (t: Testimonial) => [t.role, t.company].filter(Boolean).join(', ');
 ---
-<Section class="flex flex-col items-center gap-7 text-center">
-  <Eyebrow>Testimonios</Eyebrow>
-  <figure class="flex flex-col items-center gap-7" data-reveal>
-    <blockquote class="max-w-[960px] text-h2 text-balance">“{t.quote}”</blockquote>
-    <figcaption class="text-label text-muted">{t.author} · {t.company}</figcaption>
-  </figure>
+<Section tight class="flex flex-col gap-10 lg:gap-12">
+  <header class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between" data-reveal>
+    <div class="flex flex-col gap-4">
+      <Eyebrow>Testimonios</Eyebrow>
+      <h2 class="max-w-[560px] text-h2 text-balance">Lo dicen quienes ya trabajan con aire frío</h2>
+    </div>
+    {reviewSummary && (
+      <a href={reviewSummary.url} target="_blank" rel="noopener" class="flex items-center gap-3 text-label text-muted transition-colors hover:text-ink">
+        <span class="text-h3 text-ink">{reviewSummary.rating.toFixed(1)}</span>
+        <span class="flex text-primary" aria-label={`${reviewSummary.rating} de 5 estrellas`}>
+          {Array.from({ length: 5 }, () => <svg viewBox="0 0 20 20" class="size-4 fill-current" aria-hidden="true"><path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z" /></svg>)}
+        </span>
+        <span>Google · {reviewSummary.count} reseñas</span>
+      </a>
+    )}
+  </header>
+
+  <div class="grid gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:gap-5">
+    <!-- Featured: photo of the actual job + the outcome, in the client's words. -->
+    <figure class="testimonial-card group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface" data-reveal style="--i:1">
+      {featured.project && (
+        <Photo src={featured.project.cover ?? projectImage(featured.project.slug)} alt={featured.project.title} sizes="(min-width:1024px) 55vw, 100vw" class="aspect-[16/8] lg:aspect-[16/7]">
+          <span class="absolute bottom-4 left-4"><Badge tone="neutral">{featured.project.client} · {featured.project.system} · {featured.project.city}</Badge></span>
+        </Photo>
+      )}
+      <div class="flex flex-1 flex-col justify-between gap-8 p-6 sm:p-8">
+        <blockquote class="text-h4 text-balance sm:text-h3">“{featured.quote}”</blockquote>
+        <figcaption class="flex items-center gap-4">
+          <span class="grid size-11 shrink-0 place-items-center rounded-full bg-primary-soft text-label text-primary" aria-hidden="true">{initials(featured.author)}</span>
+          <span class="flex flex-1 flex-col gap-1">
+            <span class="text-label text-ink">{featured.author}</span>
+            <span class="text-label font-normal text-muted">{byline(featured)}</span>
+          </span>
+          {featured.project && (
+            <a href={`/proyectos/${featured.project.slug}`} class="stretched inline-flex shrink-0 items-center gap-1.5 text-label text-primary" aria-label={`Ver proyecto ${featured.project.title}`}>
+              <span class="hidden sm:inline">Ver proyecto</span> <span class="transition-transform group-hover:translate-x-0.5" aria-hidden="true">→</span>
+            </a>
+          )}
+        </figcaption>
+      </div>
+    </figure>
+
+    <div class="grid gap-4 lg:gap-5">
+      {rest.map((t, i) => (
+        <figure class="testimonial-card group relative flex flex-col justify-between gap-6 rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-7" data-reveal style={`--i:${i + 2}`}>
+          <span class="text-caption text-muted">{t.project ? `${t.project.sector} · ${t.project.title}` : t.tag}</span>
+          <blockquote class="text-body-l text-ink">“{t.quote}”</blockquote>
+          <figcaption class="flex items-center justify-between gap-4 text-label">
+            <span class="flex flex-col gap-1">
+              <span class="text-ink">{t.author}</span>
+              <span class="font-normal text-muted">{byline(t)}</span>
+            </span>
+            {t.project && (
+              <a href={`/proyectos/${t.project.slug}`} class="stretched shrink-0 text-primary" aria-label={`Ver proyecto ${t.project.title}`}>
+                <span class="inline-block transition-transform group-hover:translate-x-0.5" aria-hidden="true">→</span>
+              </a>
+            )}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
 </Section>
+
+<style>
+  /* Whole card is the hit area when it links to a project; feedback fires on press, not release. */
+  .stretched::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .testimonial-card:has(.stretched) { cursor: pointer; transition: transform 120ms ease-out, border-color 200ms ease; }
+  .testimonial-card:has(.stretched):hover { border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-line)); }
+  .testimonial-card:has(.stretched):active { transform: scale(0.99); }
+  .stretched:focus-visible { outline: none; }
+  .testimonial-card:has(.stretched:focus-visible) { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    .testimonial-card:has(.stretched):active { transform: none; }
+  }
+</style>
