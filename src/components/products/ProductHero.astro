@@ -2,7 +2,6 @@
 import Photo from '../ui/Photo.astro';
 import { productImage } from '../../lib/images';
 import Eyebrow from '../ui/Eyebrow.astro';
-import Breadcrumbs from '../ui/Breadcrumbs.astro';
 import Button from '../ui/Button.astro';
 import Price from '../ui/Price.astro';
 import { typeLabel, type Product } from '../../data/products';
@@ -12,7 +11,6 @@ const { product: p } = Astro.props as { product: Product };
 <section class="mx-auto grid max-w-[1440px] gap-10 px-4 pb-16 pt-8 sm:px-8 lg:grid-cols-[1fr_520px] lg:gap-16 lg:px-[120px]">
   <Photo src={productImage(p.slug)} alt={`${p.name}, vista frontal`} eager fit="contain" sizes="(min-width:1024px) 680px, 100vw" class="aspect-[5/4] h-fit rounded-[28px] !bg-surface lg:sticky lg:top-28" />
   <div class="flex flex-col gap-5">
-    <Breadcrumbs items={[{ label: 'Equipos', href: '/productos' }, { label: typeLabel(p.type), href: `/productos?tipo=${p.type}#catalogo` }, { label: p.name }]} />
     <Eyebrow>{p.brand} · {typeLabel(p.type)}</Eyebrow>
     <h1 class="text-display-l">{p.name}</h1>
     <p class="text-body-l text-muted text-pretty">{p.summary}</p>

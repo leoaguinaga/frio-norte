@@ -2,6 +2,8 @@
  * Contralio CRM client.
  * Endpoints are assumptions until Contralio shares its API contract:
  *   POST {CONTRALIO_API_URL}/leads            → { id }
+ *     JSON body, or multipart when the client attached photos:
+ *     `lead` (JSON) + `photos` (JPEG files named by shot: pared.jpg, exterior.jpg, placa.jpg…)
  *   GET  {CONTRALIO_API_URL}/projects?published=true → Project[]
  * Without CONTRALIO_API_URL, leads are logged and projects fall back to mock data.
  */
@@ -20,6 +22,11 @@ export type Lead = {
   city?: string;
   volume?: number; // m³ (largo × ancho × alto)
   message?: string;
+  /** Wholesale meeting fields (/mayoristas). */
+  businessName?: string;
+  ruc?: string;
+  monthlyUnits?: string;
+  preferredTime?: string;
   source: { page: string; utm?: Record<string, string> };
 };
 
@@ -53,12 +60,18 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function createLead(lead: Lead): Promise<{ id: string }> {
+export async function createLead(lead: Lead, photos: File[] = []): Promise<{ id: string }> {
   if (!API) {
-    console.info('[contralio:mock] lead', lead);
+    console.info('[contralio:mock] lead', lead, photos.map((f) => `${f.name} (${Math.round(f.size / 1024)} KB)`));
     return { id: `FN-${Date.now().toString(36).toUpperCase()}` };
   }
-  return request<{ id: string }>('/leads', { method: 'POST', body: JSON.stringify(lead) });
+  if (!photos.length) return request<{ id: string }>('/leads', { method: 'POST', body: JSON.stringify(lead) });
+  const body = new FormData();
+  body.set('lead', new Blob([JSON.stringify(lead)], { type: 'application/json' }));
+  photos.forEach((f) => body.append('photos', f, f.name));
+  const res = await fetch(`${API}/leads`, { method: 'POST', body, headers: { Authorization: `Bearer ${KEY}` }, signal: AbortSignal.timeout(20000) });
+  if (!res.ok) throw new Error(`Contralio /leads (multipart) → ${res.status}`);
+  return res.json() as Promise<{ id: string }>;
 }
 
 let cache: Project[] | undefined;

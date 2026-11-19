@@ -5,7 +5,10 @@ import Button from '../components/ui/Button.astro';
 import { whatsappLink } from '../data/site';
 const id = Astro.url.searchParams.get('id');
 const name = Astro.url.searchParams.get('n');
-const next = ['Revisamos tu solicitud', 'Te contactamos en 24 h', 'Visita técnica y cotización final'];
+const withPhotos = Number(Astro.url.searchParams.get('f')) > 0;
+const next = withPhotos
+  ? ['Un técnico revisa tus fotos', 'Te enviamos la cotización con fotos de la propuesta', 'Agendamos la instalación o servicio']
+  : ['Revisamos tu solicitud', 'Te contactamos en 24 h', 'Visita técnica y cotización final'];
 ---
 <BaseLayout title="¡Gracias!" description="Recibimos tu solicitud de cotización." noindex>
   <section class="mx-auto flex max-w-[1440px] flex-col items-center gap-7 px-4 pb-32 pt-24 text-center">
@@ -13,7 +16,7 @@ const next = ['Revisamos tu solicitud', 'Te contactamos en 24 h', 'Visita técni
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
     </span>
     <h1 class="max-w-[760px] text-display-l text-balance">¡Gracias{name ? `, ${name}` : ''}! Recibimos tu solicitud</h1>
-    <p class="max-w-[600px] text-body-l text-muted">Un asesor te escribirá por WhatsApp en menos de 24 horas con tu cotización.{id && <> Código de solicitud: <strong class="font-mono text-ink">{id}</strong>.</>}</p>
+    <p class="max-w-[600px] text-body-l text-muted">{withPhotos ? 'Un técnico revisará tus fotos y te enviará por WhatsApp, en menos de 24 horas, la cotización y cómo quedaría la instalación.' : 'Un asesor te escribirá por WhatsApp en menos de 24 horas con tu cotización.'}{id && <> Código de solicitud: <strong class="font-mono text-ink">{id}</strong>.</>}</p>
     <div class="flex flex-wrap justify-center gap-3">
       <Button href={whatsappLink(`Hola, acabo de enviar la solicitud ${id ?? ''}`)} variant="brand" size="lg" target="_blank" rel="noopener">Hablar ahora por WhatsApp</Button>
       <Button href="/proyectos" variant="secondary" size="lg">Ver proyectos</Button>

@@ -1,6 +1,6 @@
 // Central lookup for local photography. Missing files return undefined → Photo shows a placeholder.
 import type { ImageMetadata } from 'astro';
-import hero from '../assets/images/hero/hero.jpg';
+import hero from '../assets/images/hero/hero-sala.jpg';
 import openUnit from '../assets/images/maintenance/unidad-abierta.jpg';
 import team from '../assets/images/about/equipo.jpg';
 

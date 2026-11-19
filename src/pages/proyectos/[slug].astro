@@ -2,7 +2,6 @@
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Photo from '../../components/ui/Photo.astro';
-import Breadcrumbs from '../../components/ui/Breadcrumbs.astro';
 import Section from '../../components/ui/Section.astro';
 import ProjectFacts from '../../components/projects/ProjectFacts.astro';
 import ProjectCard from '../../components/projects/ProjectCard.astro';
@@ -18,10 +17,9 @@ const { project: p, others } = Astro.props as { project: Project; others: Projec
 ---
 <BaseLayout title={`${p.title} — proyecto de climatización`} description={`${p.summary} ${p.system} en ${p.city}, ${p.year}.`}>
   <div class="px-4 pt-2">
-    <Photo src={p.cover ?? projectImage(p.slug)} alt={p.title} eager sizes="100vw" class="mx-auto h-[460px] max-w-[1408px] rounded-[var(--radius-panel)] lg:h-[620px]">
+    <Photo transitionName={`project-${p.slug}`} src={p.cover ?? projectImage(p.slug)} alt={p.title} eager sizes="100vw" class="mx-auto h-[460px] max-w-[1408px] rounded-[var(--radius-panel)] lg:h-[620px]">
       <div class="absolute inset-0 bg-gradient-to-b from-transparent from-40% to-ink/80" aria-hidden="true"></div>
       <div class="absolute bottom-10 left-6 flex flex-col gap-3 text-white sm:left-14">
-        <Breadcrumbs items={[{ label: 'Proyectos', href: '/proyectos' }, { label: p.title }]} inverse />
         <h1 class="text-display-l">{p.title}</h1>
         <p class="text-body-l text-white/80">{p.summary}</p>
       </div>

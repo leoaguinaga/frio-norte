@@ -1,0 +1,51 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import Photo from '../ui/Photo.astro';
+import { images } from '../../lib/images';
+import { photoProcess } from '../../data/cotizar';
+
+// Annotations placed over the AC unit in hero-sala.jpg (4:3 crop, object-cover, centered).
+const notes = [
+  { text: 'Split inverter · 12 000 BTU', pos: 'flex right-[4%] sm:right-auto sm:left-[46%] top-[37%]' },
+  { text: 'Tubería 3 m por fachada', pos: 'hidden sm:flex right-[4%] top-[47%]' },
+  { text: 'Desagüe al exterior', pos: 'hidden sm:flex left-[42%] top-[57%]' },
+];
+---
+<section id="que-hacemos" class="mx-auto w-full max-w-[1440px] scroll-mt-8 px-4 pb-20 sm:px-8 lg:px-[120px] lg:pb-28">
+  <div class="grid items-center gap-10 rounded-[var(--radius-panel)] bg-surface p-6 sm:p-10 lg:grid-cols-[1fr_minmax(0,560px)] lg:gap-16 lg:p-16">
+    <div class="flex flex-col gap-8">
+      <div class="flex flex-col gap-4" data-reveal>
+        <Eyebrow>Qué hacemos con ellas</Eyebrow>
+        <h2 class="text-h2 text-balance">De tus fotos a una cotización con simulación</h2>
+      </div>
+      <ol class="flex flex-col gap-6">
+        {photoProcess.map((s, i) => (
+          <li class="flex gap-5" data-reveal style={`--i:${i}`}>
+            <span class="grid size-10 shrink-0 place-items-center rounded-full bg-primary-soft text-[15px] font-semibold text-primary">{i + 1}</span>
+            <div class="flex flex-col gap-1.5 pt-2">
+              <h3 class="text-h4">{s.title}</h3>
+              <p class="text-muted">{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p class="flex items-center gap-3 rounded-2xl bg-canvas p-4 text-sm text-muted" data-reveal>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-secondary" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+        Tus fotos solo se usan para cotizar. No las publicamos ni compartimos sin tu permiso.
+      </p>
+    </div>
+
+    <figure class="flex flex-col gap-3.5" data-reveal>
+      <Photo src={images.hero} alt="Sala con un aire acondicionado split instalado en la pared" sizes="(min-width:1024px) 560px, 100vw" class="aspect-[4/3] rounded-3xl">
+        <span class="absolute left-[55%] top-[8%] h-[25%] w-[27%] rounded-[14px] border-2 border-dashed border-primary" aria-hidden="true"></span>
+        <span class="absolute left-4 top-4 rounded-full bg-ink px-3.5 py-2 text-caption text-white">Simulación</span>
+        {notes.map((n) => (
+          <span class={`absolute ${n.pos} items-center gap-2 whitespace-nowrap rounded-full bg-surface py-1.5 pl-2.5 pr-3 text-[11px] font-medium shadow-[var(--shadow-float)] sm:text-[13px]`}>
+            <span class="size-2 rounded-full bg-primary" aria-hidden="true"></span>{n.text}
+          </span>
+        ))}
+      </Photo>
+      <figcaption class="text-[13px] text-muted">Ejemplo ilustrativo de la simulación que recibes junto con tu cotización.</figcaption>
+    </figure>
+  </div>
+</section>

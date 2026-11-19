@@ -6,6 +6,6 @@ import { getProjects } from '../../lib/contralio';
 const projects = await getProjects();
 ---
 <BaseLayout title="Proyectos de climatización" description="Instalaciones de aire acondicionado en salud, banca, educación, retail e industria en todo el Perú.">
-  <PageHeader eyebrow="Proyectos" title="500+ instalaciones en todo el Perú" subtitle="Salud, banca, educación, retail e industria. Cada proyecto, documentado." crumbs={[{ label: 'Proyectos' }]} />
+  <PageHeader eyebrow="Proyectos" title="500+ instalaciones en todo el Perú" subtitle="Salud, banca, educación, retail e industria. Cada proyecto, documentado." />
   <ProjectGrid projects={projects} />
 </BaseLayout>

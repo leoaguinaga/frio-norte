@@ -6,7 +6,7 @@ import type { Project } from '../../lib/contralio';
 const { project: p, class: cls, ratio = 'aspect-[4/3]', i = 0 } = Astro.props as { project: Project; class?: string; ratio?: string; i?: number };
 ---
 <a href={`/proyectos/${p.slug}`} class:list={['group flex flex-col gap-4', cls]} data-reveal style={`--i:${i}`} data-sector={p.sector}>
-  <Photo src={p.cover ?? projectImage(p.slug)} alt={p.title} sizes="(min-width:1024px) 60vw, 100vw" class:list={['rounded-3xl', ratio]}>
+  <Photo transitionName={`project-${p.slug}`} src={p.cover ?? projectImage(p.slug)} alt={p.title} sizes="(min-width:1024px) 60vw, 100vw" class:list={['rounded-3xl', ratio]}>
     <span class="absolute left-4 top-4"><Badge tone="neutral">{p.sector}</Badge></span>
   </Photo>
   <div>

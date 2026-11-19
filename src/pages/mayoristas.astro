@@ -1,0 +1,185 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/ui/Section.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
+import Button from '../components/ui/Button.astro';
+import Breadcrumbs from '../components/ui/Breadcrumbs.astro';
+import Photo from '../components/ui/Photo.astro';
+import Faq from '../components/ui/Faq.astro';
+import MeetingForm from '../components/forms/MeetingForm';
+import { serviceImage } from '../lib/images';
+import { testimonials, stats } from '../data/home';
+import { minOrder, pains, benefits, brandLines, steps, audience, meetingAgenda, faq } from '../data/mayoristas';
+import lg from '../assets/images/brands/lg.png';
+import midea from '../assets/images/brands/midea.webp';
+
+const logos = { lg, midea } as const;
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+const proof = [stats[0], stats[1], stats[3]];
+// Coinrefri Air is a partner climatizadora — the most relevant voice for this page.
+const testimonial = testimonials.find((t) => t.company === 'Coinrefri Air SAC') ?? testimonials[0];
+---
+<BaseLayout
+  title="Venta mayorista de aire acondicionado para climatizadoras"
+  description="Precio mayorista, stock en Chiclayo y garantía LG y Midea gestionada por nosotros. Agenda una reunión estratégica y arma tus condiciones según tu volumen."
+  footerCta={{ title: '¿Hablamos de tu próximo pedido?', label: 'Agendar reunión', href: '#agendar' }}
+>
+  <!-- Hero -->
+  <section class="mx-auto grid max-w-[1440px] items-center gap-10 px-4 pb-16 pt-12 sm:px-8 lg:grid-cols-[1fr_520px] lg:gap-16 lg:px-[120px] lg:pb-24">
+    <div class="flex flex-col gap-6">
+      <Breadcrumbs items={[{ label: 'Mayoristas' }]} />
+      <Eyebrow>Para empresas climatizadoras</Eyebrow>
+      <h1 class="text-display-l text-balance">Tu proveedor de equipos en el norte. Tú instalas, nosotros abastecemos.</h1>
+      <p class="max-w-[560px] text-body-l text-muted text-pretty">
+        Precio mayorista, stock en Chiclayo y garantía de fábrica LG y Midea gestionada por nosotros. Agenda una reunión de 30 minutos y armamos condiciones a la medida de tu volumen.
+      </p>
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-3">
+        <Button href="#agendar" variant="brand" size="lg">Agendar reunión estratégica</Button>
+        <p class="text-sm text-muted">30 min · presencial o videollamada · sin compromiso</p>
+      </div>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 pt-2 text-label">
+        <li>✓ Distribuidor autorizado LG y Midea</li>
+        <li>✓ Stock en Chiclayo</li>
+        <li>✓ Factura y garantía por escrito</li>
+      </ul>
+    </div>
+    <!-- TODO(Frío Norte): replace with a photo of the warehouse / a dispatch. -->
+    <Photo src={serviceImage('instalacion')} alt="Técnicos de Frío Norte instalando equipos" eager sizes="(min-width:1024px) 520px, 100vw" class="aspect-[4/5] rounded-[var(--radius-panel)] lg:aspect-[13/15]">
+      <div class="absolute inset-x-4 bottom-4 flex max-w-[300px] flex-col gap-2 rounded-3xl bg-surface p-6 shadow-[var(--shadow-float)] sm:inset-x-6 sm:bottom-6">
+        <p class="text-caption uppercase tracking-wide text-primary">Precio mayorista</p>
+        <p class="text-h4">{minOrder}</p>
+        <p class="text-sm text-muted">Escala de precios según tu volumen mensual.</p>
+      </div>
+    </Photo>
+  </section>
+
+  <!-- Dolores -->
+  <Section>
+    <SectionHeader eyebrow="El día a día del instalador" title="Si instalas aire acondicionado, esto te suena" />
+    <ul class="grid gap-4 md:grid-cols-3 lg:gap-6">
+      {pains.map((p, i) => (
+        <li class="flex flex-col gap-4 rounded-3xl bg-surface p-8" data-reveal style={`--i:${i}`}>
+          <span class="text-label text-primary">{pad(i)}</span>
+          <h3 class="text-h4">{p.title}</h3>
+          <p class="text-muted">{p.text}</p>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <!-- Beneficios -->
+  <div class="bg-surface">
+    <Section>
+      <SectionHeader eyebrow="Programa de aliados" title="Lo que ganas trabajando con Frío Norte">
+        <p class="max-w-[380px] text-muted lg:pb-1">Condiciones pensadas para empresas que instalan todos los meses, no para el cliente final.</p>
+      </SectionHeader>
+      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        {benefits.map((b, i) => (
+          <li class="flex flex-col gap-4 rounded-3xl bg-canvas p-8" data-reveal style={`--i:${i % 3}`}>
+            <span class="text-label text-primary">{pad(i)}</span>
+            <h3 class="text-h4">{b.title}</h3>
+            <p class="text-muted">{b.text}</p>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  </div>
+
+  <!-- Marcas -->
+  <Section>
+    <SectionHeader eyebrow="Marcas" title="Equipos LG y Midea, con respaldo de fábrica">
+      <p class="max-w-[380px] text-muted lg:pb-1">Somos distribuidor autorizado: compras directo, con factura y garantía oficial.</p>
+    </SectionHeader>
+    <div class="grid gap-4 md:grid-cols-2 lg:gap-6">
+      {brandLines.map((b, i) => (
+        <article class="flex flex-col gap-5 rounded-3xl bg-surface p-7 lg:p-10" data-reveal style={`--i:${i}`}>
+          <div class="flex items-center justify-between gap-4">
+            <Image src={logos[b.logo]} alt={b.name} class="h-10 w-auto" height={80} />
+            <p class="shrink-0 rounded-full bg-secondary-soft px-3 py-2 text-caption text-secondary">Distribuidor autorizado</p>
+          </div>
+          <p class="text-muted">{b.text}</p>
+          <ul class="flex flex-wrap gap-2">
+            {b.lines.map((l) => <li class="rounded-full bg-primary-soft px-3.5 py-2 text-label">{l}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </Section>
+
+  <!-- Cómo trabajamos -->
+  <div class="bg-surface">
+    <Section>
+      <SectionHeader eyebrow="Cómo trabajamos" title="De la primera reunión a tu abastecimiento continuo" />
+      <ol class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        {steps.map((s, i) => (
+          <li class="flex flex-col gap-3 border-t-2 border-primary pt-6" data-reveal style={`--i:${i}`}>
+            <span class="text-caption text-primary">Paso {i + 1}</span>
+            <h3 class="text-h4">{s.title}</h3>
+            <p class="text-sm text-muted">{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </Section>
+  </div>
+
+  <!-- Para quién + testimonio -->
+  <Section class="grid items-center gap-10 lg:grid-cols-[1fr_560px] lg:gap-16">
+    <div class="flex flex-col gap-6" data-reveal>
+      <Eyebrow>Para quién es</Eyebrow>
+      <h2 class="text-h2 text-balance">Hecho para empresas que instalan todos los meses</h2>
+      <ul class="flex flex-col gap-4 pt-2">
+        {audience.map((a) => (
+          <li class="flex gap-3">
+            <svg class="mt-0.5 size-[22px] shrink-0" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="11" class="fill-primary-soft" /><path d="M6.6 11.2l2.9 2.9 5.9-5.9" class="stroke-primary" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            {a}
+          </li>
+        ))}
+      </ul>
+    </div>
+    <figure class="flex flex-col gap-8 rounded-[var(--radius-panel)] bg-surface p-8 lg:p-12" data-reveal style="--i:1">
+      <blockquote class="text-h3 text-balance">“{testimonial.quote}”</blockquote>
+      <figcaption class="flex flex-col gap-1">
+        <span class="text-label">{testimonial.author}</span>
+        <span class="text-sm text-muted">{testimonial.company} · Aliado Frío Norte</span>
+      </figcaption>
+      <dl class="grid grid-cols-3 gap-6 border-t border-line pt-8">
+        {proof.map((s) => (
+          <div class="flex flex-col gap-1">
+            <dt class="order-2 text-sm text-muted">{s.label}</dt>
+            <dd class="order-1 text-h3 text-primary">{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </figure>
+  </Section>
+
+  <!-- Reunión estratégica + agenda -->
+  <Section tight class="lg:pb-24">
+    <div class="grid items-center gap-10 rounded-[var(--radius-panel)] bg-ink p-6 sm:p-10 lg:grid-cols-[1fr_460px] lg:gap-16 lg:p-16">
+      <div class="flex flex-col gap-6 text-white" data-reveal>
+        <Eyebrow inverse>La reunión estratégica</Eyebrow>
+        <h2 class="text-h2 text-balance">30 minutos para armar tus condiciones</h2>
+        <p class="text-body-l text-white/70 text-pretty">No es una llamada de ventas. Revisamos tu operación y sales con números concretos.</p>
+        <ul class="flex flex-col gap-4 py-2">
+          {meetingAgenda.map((a) => (
+            <li class="flex gap-3">
+              <svg class="mt-0.5 size-[22px] shrink-0" viewBox="0 0 22 22" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="11" class="fill-primary-soft" /><path d="M6.6 11.2l2.9 2.9 5.9-5.9" class="stroke-primary" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              {a}
+            </li>
+          ))}
+        </ul>
+        <p class="flex flex-wrap gap-3 text-label">
+          <span class="rounded-full bg-white/10 px-3.5 py-2">⏱ 30 minutos</span>
+          <span class="rounded-full bg-white/10 px-3.5 py-2">📍 En Chiclayo o por videollamada</span>
+        </p>
+      </div>
+      <div class="rounded-3xl bg-surface p-6 sm:p-8">
+        <MeetingForm client:idle />
+      </div>
+    </div>
+  </Section>
+
+  <Faq items={faq} />
+</BaseLayout>

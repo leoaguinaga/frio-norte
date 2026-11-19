@@ -22,7 +22,9 @@ const select = 'h-9 cursor-pointer appearance-none rounded-full bg-canvas px-4 t
 </Section>
 
 <script>
-  const form = document.querySelector<HTMLFormElement>('[data-catalog-filters]')!;
+  document.addEventListener('astro:page-load', () => {
+  const form = document.querySelector<HTMLFormElement>('[data-catalog-filters]');
+  if (!form) return;
   const cards = [...document.querySelectorAll<HTMLElement>('[data-catalog-grid] > a')];
   const empty = document.querySelector<HTMLElement>('[data-empty]')!;
   const clear = form.querySelector<HTMLButtonElement>('[data-clear]')!;
@@ -56,4 +58,5 @@ const select = 'h-9 cursor-pointer appearance-none rounded-full bg-canvas px-4 t
   form.addEventListener('change', apply);
   form.addEventListener('reset', () => setTimeout(apply));
   if ([...params.keys()].length) apply();
+  });
 </script>

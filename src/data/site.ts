@@ -8,7 +8,8 @@ export const site = {
   email: 'ventas@frionorte.com.pe',
   address: 'Prol. Bolognesi Mz A Lt 04, PP.JJ. Espiga de Oro, Chiclayo',
   hours: 'Lun–Sáb · 8:00–19:00',
-  mapsUrl: 'https://maps.google.com/?q=Frio+Norte+Chiclayo',
+  mapsUrl: 'https://maps.app.goo.gl/Qy3LbjBL1CAx4oEj9',
+  mapsEmbedUrl: 'https://www.google.com/maps?q=-6.7848415,-79.8634487&z=17&hl=es&output=embed',
   whatsapp: import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '51999999999',
   social: [
     { label: 'Facebook', href: 'https://facebook.com' },
@@ -22,6 +23,7 @@ export const nav = [
   { label: 'Equipos', href: '/productos' },
   { label: 'Proyectos', href: '/proyectos' },
   { label: 'Nosotros', href: '/nosotros' },
+  { label: 'Mayoristas', href: '/mayoristas' },
 ] as const;
 
 export const whatsappLink = (text = 'Hola, quiero una cotización') =>

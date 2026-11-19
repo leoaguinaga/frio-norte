@@ -1,0 +1,63 @@
+---
+import Section from '../ui/Section.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import ShotIllustration from './ShotIllustration.astro';
+import { shots, photoTips } from '../../data/cotizar';
+
+const icons: Record<(typeof photoTips)[number]['icon'], string> = {
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  landscape: '<rect x="3" y="7" width="18" height="11" rx="2"/><path d="M8 21h8"/>',
+  zoom: '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M8.5 11h5"/>',
+  door: '<path d="M6 21V4h9v17M15 12h-2"/><path d="M3 21h18"/>',
+};
+---
+<Section id="guia-fotos" class="scroll-mt-8">
+  <header class="mb-10 flex flex-col gap-6 lg:mb-12 lg:flex-row lg:items-end lg:justify-between" data-reveal>
+    <div class="flex max-w-[720px] flex-col gap-4">
+      <Eyebrow>Guía de fotos</Eyebrow>
+      <h2 class="text-h2 text-balance">Qué fotos necesitamos (y por qué)</h2>
+      <p class="text-body-l text-muted text-pretty">Con tu celular basta, no necesitas medir nada. Cada foto le responde una pregunta al técnico, así tu cotización llega con el equipo y la instalación correctos para tu casa.</p>
+    </div>
+    <aside class="flex flex-col gap-1.5 rounded-[20px] bg-surface p-5 lg:max-w-[340px]">
+      <p class="text-label">¿Es mantenimiento o reparación?</p>
+      <p class="text-sm text-muted">Te pediremos otras fotos: tu equipo de frente, la etiqueta con marca y modelo, la unidad exterior y el problema (goteo, hielo o código de error).</p>
+    </aside>
+  </header>
+
+  <ol class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {shots.map((s, i) => (
+      <li class="flex flex-col gap-5 rounded-3xl bg-surface p-2 pb-5" data-reveal style={`--i:${i}`}>
+        <div class="grid aspect-[4/3] place-items-center rounded-[18px] bg-canvas px-4">
+          <ShotIllustration id={s.id} />
+        </div>
+        <div class="flex flex-1 flex-col gap-2 px-3">
+          <span class="text-caption text-primary">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="text-h4">{s.title}</h3>
+          <p class="text-sm text-muted">{s.how}</p>
+        </div>
+        <div class="mx-3 flex flex-col gap-1 rounded-[14px] bg-primary-soft p-3.5">
+          <span class="text-[11px] font-semibold tracking-[0.04em] text-primary">PARA QUÉ LA USAMOS</span>
+          <p class="text-sm">{s.why}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+
+  <div class="mt-4 grid gap-1 rounded-3xl bg-surface p-2 sm:grid-cols-2 lg:grid-cols-[200px_repeat(4,1fr)] lg:items-center" data-reveal>
+    <div class="px-4 py-3 sm:col-span-2 lg:col-span-1">
+      <p class="text-label">Para que salgan bien</p>
+      <p class="text-sm text-muted">30 segundos por foto</p>
+    </div>
+    {photoTips.map((t) => (
+      <div class="flex items-center gap-3 p-3">
+        <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-canvas text-primary">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[t.icon]} />
+        </span>
+        <span class="flex flex-col">
+          <span class="text-label">{t.title}</span>
+          <span class="text-[13px] text-muted">{t.text}</span>
+        </span>
+      </div>
+    ))}
+  </div>
+</Section>
